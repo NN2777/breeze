@@ -58,11 +58,11 @@
                 <x-navbar />
 
                 <!-- Page Heading -->
-                <header>
+                {{-- <header>
                     <div class="p-4 sm:p-6">
                         {{ $header }}
                     </div>
-                </header>
+                </header> --}}
 
                 <!-- Page Content -->
                 <main class="px-4 sm:px-6 flex-1">

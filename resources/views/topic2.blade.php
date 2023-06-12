@@ -16,15 +16,11 @@
           </div>
 
            <!-- Button trigger modal -->
-        {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
           Launch demo modal
-        </button> --}}
+        </button>
 
-        <x-button class="justify-center sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          <span> Launch demo modal</span>
-        </x-button>
-
-          {{-- <div class="card-body">
+          <div class="card-body">
             <form action="{{ route('uploadPDF') }}" method="POST" enctype="multipart/form-data">
               @csrf
               <div>
@@ -40,7 +36,7 @@
               </div>
               <button type="submit">Upload</button>
           </form>
-          </div> --}}
+          </div>
           <div class="card-body">
             @if($pdfFiles->isNotEmpty())
               <ul class="list-group">
@@ -72,21 +68,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form action="{{ route('uploadPDF') }}" method="POST" enctype="multipart/form-data">
-                  @csrf
-                  <div>
-                      <label for="pdf_file">PDF File:</label>
-                      <input type="file" id="pdf_file" name="pdf_file" accept="application/pdf">
-                  </div>
-                  <div>
-                    <input type="number" id="topic_id" name="topic_id" value={{ $topic->id }} hidden>
-                  </div>
-                  <div>
-                      <label for="file_name">File Name:</label>
-                      <input type="text" id="file_name" name="file_name">
-                  </div>
-                  <button type="submit">Upload</button>
-              </form>
+                ...
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

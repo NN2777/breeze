@@ -4,22 +4,30 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-
-    <input id="nameclass" type="text" placeholder="myclass"> 
-
-  <div id="flowchart" style="text-align: center;"></div>
-
-  <div id="contextMenu"></div>
-
-  <div style="position: relative; padding: 2rem 0 0.5rem 0; border-style: solid; border-color: black">
-      <div id="edit" style="text-align: center;"></div>
-  </div>
-  
-  <div style="position: relative; padding: 2rem 0 0.5rem 0; border-style: solid; border-color: black">
-      <p id="codearea"></p>
-      <ul id="item-list"></ul>
-  </div>
-
+    <div class="container">
+      <div class="card mt-5">
+        <div class="card-body text-center">
+          <input id="nameclass" type="text" placeholder="myclass"> 
+        </div>
+        <div class="card-body">
+          <div id="flowchart" style="text-align: center;"></div>
+        </div>
+        <div class="card-body">
+          <div id="contextMenu"></div>
+        </div>
+        <div class="card-body">
+        <div style="position: relative; padding: 2rem 0 0.5rem 0; border-style: solid; border-color: black">
+            <div id="edit" style="text-align: center;"></div>
+        </div>
+        </div>
+        <div class="card-body">
+        <div style="position: relative; padding: 2rem 0 0.5rem 0; border-style: solid; border-color: black">
+            <p id="codearea"></p>
+            <ul id="item-list"></ul>
+        </div>
+        </div>
+      </div>
+    </div>
 <script>
  
 $(document).ready(function(){

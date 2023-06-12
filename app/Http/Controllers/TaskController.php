@@ -30,7 +30,7 @@ class TaskController extends Controller
 
     public function updateData(Request $request)
     {
-        $dataId = (int) $request->input('dataId'); // The ID of the data object being updated
+        $dataId = $request->input('dataId'); // The ID of the data object being updated
         $property = $request->input('property'); // The property name to be updated
         $value = $request->input('value'); // The updated value
 
