@@ -50,10 +50,6 @@ $(document).ready(function(){
 
 });
 
-// const nodeId = "FalseBranch_(FalseBranch_5_1)_1";
-// const node = findNodeById(data, nodeId);
-// console.log(node);
-
 function refresh(){
   let getelement = [];
   let element = [];
@@ -67,25 +63,12 @@ function refresh(){
           element.splice(0, 0, ...JSON.parse(getelement));
         }
         console.log(element);
-        // selectNodeByTranslatedId(translateIdsInData(element));
-        // const result = selectValue(translateIdsInData(element), "TrueBranch_TrueBranch_6_3_2");
-        // console.log(result);
-        // console.log(selectValue(translateIdsInData(element), "TrueBranch_6_3"))
-        // console.log(selectValue(translateIdsInData(element), "6"))
-        // console.log(selectNodeByTranslatedId(translateIdsInData(element), "(TrueBranch_(TrueBranch_6_3)_1)"))
-        // console.log(selectValue(translateIdsInData(element), "TrueBranch_TrueBranch_TrueBranch_6_3_2_2"))
         codeBox(listjavacode, element);
         generateFlowchart(element);
         genInputBox(element, null, null);
         translate(listjavacode);
         change();
         delete2(element);
-        // console.log(element);
-        // findtheArray(element, "TrueBranch_5_0");
-        // console.log(translateData(element));
-        // console.log(findObjectById(element, 6));
-        // console.log(element);
-        // Do something with the data array
     },
     error: function(xhr) {
         console.log(xhr.responseText);
@@ -233,15 +216,6 @@ function codeBox(code, element){
     addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
   }
   addline(code, 'public static void main(String args[]){', 1);
-  // while (element.nodetype == 'End') {
-  //   addline(translate(statement)) //statement, all different value like prompt or etc from start to end
-  // }
-  // for (let index = 0; index < element.length; index++) {
-  //   addline(code, statement(element[index]), 2)
-  // }
-  // for (let index = 0; index < element.length; index++) {
-  //   statement2code(code, element[index], element);
-  // }
   rule2code(code, element, 2);
   addline(code, '}', 1);
   addline(code, '}', 0);

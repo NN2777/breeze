@@ -1,15 +1,24 @@
-<x-app-layout>
-    <x-slot name="header">
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag && $constructor = (new ReflectionClass(App\View\Components\AppLayout::class))->getConstructor()): ?>
+<?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
+            <?php echo e(__('Dashboard')); ?>
+
         </h2>
-    </x-slot>
+     <?php $__env->endSlot(); ?>
     <div class="container">
       <div class="row">
         <div class="col-md-6">
           <div class="card mt-5">
             <div class="card-body text-center">
-              <!-- <input id="nameclass" type="text" value="{{ $task->name_class }}">  -->
+              <!-- <input id="nameclass" type="text" value="<?php echo e($task->name_class); ?>">  -->
             </div>
             <div class="card-body">
               <div id="flowchart" style="text-align: center;"></div>
@@ -59,7 +68,7 @@ function refresh(){
   let element = [];
   let listjavacode = [];
   $.ajax({
-    url: '{{ route("task.data", ["id" => 8]) }}',
+    url: '<?php echo e(route("task.data", ["id" => 8])); ?>',
     type: 'GET',
     success: function(response) {
         getelement = response.data;
@@ -376,7 +385,7 @@ function delete2(element){
     findtheArraytoDel(data, dataId);
     var jsonData = data;
     $.ajax({
-              url: '{{ route('del.jsondata') }}',
+              url: '<?php echo e(route('del.jsondata')); ?>',
               type: 'POST',              
               headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -813,7 +822,7 @@ function showContextMenu(posX, posY, id, class1, label, element) {
             var jsonData = element;
 
             $.ajax({
-              url: '{{ route('add.jsondata') }}',
+              url: '<?php echo e(route('add.jsondata')); ?>',
               type: 'POST',              
               headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -876,6 +885,7 @@ function generateFlowchart(element) {
   // Initialize the graphviz object
   var graphviz = d3.select("#flowchart").graphviz().zoom(false)
     .attributer(attributer);
+  // console.log(isHaveBranch(element, "3"));
 
   // Define the flowchart nodes
   var nodes = [];
@@ -988,6 +998,29 @@ function generateFlowchart(element) {
     edges.push({ from: from, to: to, label:label });
   }
 
+  function isHaveBranch(element, id){
+    var nodetype;
+    console.log(id);
+    if (isNaN(id)) {
+      fromsplit = id.split("_");
+      id = fromsplit[fromsplit.length - 1] - 1;
+    }else {
+      id = id - 1;
+    }
+
+    // INI GK BISA IDENTIFY ID BRANCH ATAS
+
+    console.log(element, id, element[id]);
+    if (element[id]?.nodetype == "Selection") {
+      nodetype = element[id].nodetype;
+    }else if (element[id]?.nodetype == "Looping"){
+      nodetype = element[id].nodetype;
+    }else {
+      nodetype = null;
+    }
+    return nodetype; //ngembaliin nodetype
+  }
+
   function processBranchForTrue(element, parent, branch){
     processEdge(element, parent, processIdFormat(element[0].id, parent, branch), processIdFormat(0, parent, branch));
     processElement(element, parent, branch);
@@ -1016,30 +1049,6 @@ function generateFlowchart(element) {
   processElement(element);
   // nodes.push({ id: "element_1", shape: "circle", label: "NGAPUS" });
   // Generate the DOT code for the graph
-
-  function isHaveBranch(element, id){
-    var nodetype;
-    console.log(id);
-    if (isNaN(id)) {
-      fromsplit = id.split("_");
-      id = fromsplit[fromsplit.length - 1] - 1;
-    }else {
-      id = id - 1;
-    }
-
-    // INI GK BISA IDENTIFY ID BRANCH ATAS
-
-    console.log(element, id, element[id]);
-    if (element[id]?.nodetype == "Selection") {
-      nodetype = element[id].nodetype;
-    }else if (element[id]?.nodetype == "Looping"){
-      nodetype = element[id].nodetype;
-    }else {
-      nodetype = null;
-    }
-    return nodetype; //ngembaliin nodetype
-  }
-
   for (var i = 0; i < nodes.length; i++) {
     var node = nodes[i];
     dot += node.id + ' [label="' + node.label + '", shape=' + node.shape + '];\n';
@@ -1054,6 +1063,8 @@ function generateFlowchart(element) {
   
   dot += '}';
 
+  // console.log(dot);
+
   graphviz
     .renderDot(dot)
     .on("end", function () {
@@ -1067,4 +1078,10 @@ function generateFlowchart(element) {
 
 </script>
 
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH C:\Naufal Nafidiin\Koding\breeze\resources\views/show.blade.php ENDPATH**/ ?>

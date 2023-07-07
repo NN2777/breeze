@@ -1,0 +1,3 @@
+<svg aria-hidden="true" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+</svg><?php /**PATH C:\Naufal Nafidiin\Koding\breeze\storage\framework\views/0420e95b062cacbf5ae62d6283800681.blade.php ENDPATH**/ ?>

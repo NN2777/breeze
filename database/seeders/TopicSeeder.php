@@ -41,11 +41,35 @@ class TopicSeeder extends Seeder
                 Konsep-konsep ini sangat mendasar untuk pemrograman dan memahami bagaimana data disimpan, dimanipulasi, dan diproses dalam suatu program.'
             ],
             [
-                'topic_name' => 'Seleksi atau Pemilihan',
+                'topic_name' => 'Seleksi',
+                'description' => 'Seleksi, juga dikenal sebagai pernyataan bersyarat atau percabangan, mengacu pada konstruksi pemrograman yang memungkinkan suatu program untuk membuat keputusan dan menjalankan rangkaian instruksi yang berbeda berdasarkan kondisi tertentu. Ini memungkinkan program untuk memilih antara jalur eksekusi yang berbeda berdasarkan evaluasi suatu kondisi. Jenis pernyataan seleksi yang umum termasuk pernyataan if, pernyataan switch, dan operator ternary.'
+            ],
+            [
+                'topic_name' => 'Seleksi 2',
                 'description' => 'Seleksi, juga dikenal sebagai pernyataan bersyarat atau percabangan, mengacu pada konstruksi pemrograman yang memungkinkan suatu program untuk membuat keputusan dan menjalankan rangkaian instruksi yang berbeda berdasarkan kondisi tertentu. Ini memungkinkan program untuk memilih antara jalur eksekusi yang berbeda berdasarkan evaluasi suatu kondisi. Jenis pernyataan seleksi yang umum termasuk pernyataan if, pernyataan switch, dan operator ternary.'
             ],
             [
                 'topic_name' => 'Pengulangan',
+                'description' => 'Perulangan, juga dikenal sebagai iterasi atau pengulangan, adalah konstruksi pemrograman yang memungkinkan serangkaian instruksi dieksekusi berulang kali hingga kondisi tertentu terpenuhi. Ini membantu mengotomatiskan tugas berulang atau memproses pengumpulan data. Ada berbagai jenis perulangan dalam pemrograman, seperti perulangan for, perulangan while, dan perulangan do-while. Perulangan ini memungkinkan eksekusi blok kode berkali-kali, baik berdasarkan hitungan tertentu atau hingga kondisi tertentu menjadi salah.'
+            ],
+            [
+                'topic_name' => 'Nested If',
+                'description' => 'Perulangan, juga dikenal sebagai iterasi atau pengulangan, adalah konstruksi pemrograman yang memungkinkan serangkaian instruksi dieksekusi berulang kali hingga kondisi tertentu terpenuhi. Ini membantu mengotomatiskan tugas berulang atau memproses pengumpulan data. Ada berbagai jenis perulangan dalam pemrograman, seperti perulangan for, perulangan while, dan perulangan do-while. Perulangan ini memungkinkan eksekusi blok kode berkali-kali, baik berdasarkan hitungan tertentu atau hingga kondisi tertentu menjadi salah.'
+            ],
+            [
+                'topic_name' => 'Array 1',
+                'description' => 'Perulangan, juga dikenal sebagai iterasi atau pengulangan, adalah konstruksi pemrograman yang memungkinkan serangkaian instruksi dieksekusi berulang kali hingga kondisi tertentu terpenuhi. Ini membantu mengotomatiskan tugas berulang atau memproses pengumpulan data. Ada berbagai jenis perulangan dalam pemrograman, seperti perulangan for, perulangan while, dan perulangan do-while. Perulangan ini memungkinkan eksekusi blok kode berkali-kali, baik berdasarkan hitungan tertentu atau hingga kondisi tertentu menjadi salah.'
+            ],
+            [
+                'topic_name' => 'Array 2',
+                'description' => 'Perulangan, juga dikenal sebagai iterasi atau pengulangan, adalah konstruksi pemrograman yang memungkinkan serangkaian instruksi dieksekusi berulang kali hingga kondisi tertentu terpenuhi. Ini membantu mengotomatiskan tugas berulang atau memproses pengumpulan data. Ada berbagai jenis perulangan dalam pemrograman, seperti perulangan for, perulangan while, dan perulangan do-while. Perulangan ini memungkinkan eksekusi blok kode berkali-kali, baik berdasarkan hitungan tertentu atau hingga kondisi tertentu menjadi salah.'
+            ],
+            [
+                'topic_name' => 'Fungsi 1',
+                'description' => 'Perulangan, juga dikenal sebagai iterasi atau pengulangan, adalah konstruksi pemrograman yang memungkinkan serangkaian instruksi dieksekusi berulang kali hingga kondisi tertentu terpenuhi. Ini membantu mengotomatiskan tugas berulang atau memproses pengumpulan data. Ada berbagai jenis perulangan dalam pemrograman, seperti perulangan for, perulangan while, dan perulangan do-while. Perulangan ini memungkinkan eksekusi blok kode berkali-kali, baik berdasarkan hitungan tertentu atau hingga kondisi tertentu menjadi salah.'
+            ],
+            [
+                'topic_name' => 'Fungsi 2',
                 'description' => 'Perulangan, juga dikenal sebagai iterasi atau pengulangan, adalah konstruksi pemrograman yang memungkinkan serangkaian instruksi dieksekusi berulang kali hingga kondisi tertentu terpenuhi. Ini membantu mengotomatiskan tugas berulang atau memproses pengumpulan data. Ada berbagai jenis perulangan dalam pemrograman, seperti perulangan for, perulangan while, dan perulangan do-while. Perulangan ini memungkinkan eksekusi blok kode berkali-kali, baik berdasarkan hitungan tertentu atau hingga kondisi tertentu menjadi salah.'
             ],
         ];

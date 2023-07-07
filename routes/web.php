@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/json-data/{id}', [TaskController::class, 'getData'])->name('task.data');
     Route::post('/update-data', [TaskController::class, 'updateData']);
     Route::post('/add-json-data', [TaskController::class, 'addJsonData'])->name('add.jsondata');
+    Route::post('/del-json-data', [TaskController::class, 'delJsonData'])->name('del.jsondata');
     Route::get('/show/{id}', [TaskController::class, 'show'])->name('show.page');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
