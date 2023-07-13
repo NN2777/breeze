@@ -9,5 +9,5 @@ class PdfFile extends Model
 {
     use HasFactory;
 
-    protected $table = 'pdfFiles';
+    protected $table = 'pdffiles';
 }

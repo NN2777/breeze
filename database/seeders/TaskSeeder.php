@@ -23,6 +23,13 @@ class TaskSeeder extends Seeder
             [
                 'topic_id' => 6,
                 'task_no' => 1,
+                'question' => 'Pak Adi mempunyai sebuah kebun berbetuk persegi
+                panjang, buatlah flowchart untuk menghitung luas dan
+                keliling kebun pak Adi!',
+            ],
+            [
+                'topic_id' => 6,
+                'task_no' => 2,
                 'question' => 'Pak Andi memiliki lahan berbentuk lingkaran dengan diameter 150m. Di dalam lahan
                         pak Andi terdapat kolam renang berbetuk persegi dengan sisi 75m. Buatlah flowchart
                         untuk menghitung berapakah luas kolam renang dan lahan pak Andi yang tidak
@@ -30,7 +37,7 @@ class TaskSeeder extends Seeder
             ],
             [
                 'topic_id' => 6,
-                'task_no' => 2,
+                'task_no' => 3,
                 'question' => 'Gaji bersih karyawan PT. Indonesia Sejahtera didapatkan dari jumlah gaji pokok dan
                         tunjangan dikurangi pajak ditambah bonus mingguan. Gaji pokok karyawan PT.
                         Indonesia Sejahtera adalah Rp. 5.250.000,-. Tunjangan karyawan dihitung 20% dari gaji
