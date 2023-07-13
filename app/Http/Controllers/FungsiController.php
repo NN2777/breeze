@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Fungsi;
 use App\Models\Answer;
 use App\Http\Controllers\Controller;
@@ -43,13 +44,10 @@ class FungsiController extends Controller
 
     public function updateData(Request $request, $id) //ini update nanti tambahin id
     {
-        // $dataId = $request->input('dataId'); // The ID of the data object being updated
-        // $property = $request->input('property'); // The property name to be updated
-        // $value = $request->input('value'); // The updated value
         $updatedData = $request->input('element'); // The updated value
-        // return response()->json(['property' => $property, 'dataId' => $dataId, 'value'=>$value]);
-        // Retrieve the data from the database        
+ 
         $data = Fungsi::find($id); // <<<<<<<<<<<<<<<<<<<<<<<<<< disini
+        $data->function_type = $updatedData[0]['type'];
         
         $updatedFlowchart = json_encode($updatedData);
 
@@ -155,7 +153,7 @@ class FungsiController extends Controller
 
         $data->delete();
 
-        return redirect()->route('answer.index', ['id' => $index->id]);
+        return redirect()->route('show.page', ['taskid' => $index->task_id, 'userid' => Auth::id() ]);
         // return response()->json(['data' => $data]);
         // return response()->json(['success' => true, 'message' => 'Data deleted successfully.']);
     }

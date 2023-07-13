@@ -184,25 +184,16 @@ function translateIdsInData(data) {
 }
 
 function codeBox(code, element){
-  addline(code, 'public class myclass(){', 0);
-  if(hasInput(element) == true){
-    addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
-  }
-  addline(code, 'public static void main(String args[]){', 1);
-  rule2code(code, element, 2);
-  addline(code, '}', 1);
-  getFungsi().then(function(response) {
-    var data = response.map(function(item) {
-      return item;
-    });
-    console.log(data);
-    for (let index = 0; index < data.length; index++) {
-      addline(code, 'public static ' + data[index].function_type + " " + data[index].function_name + '(){', 1);
-      rule2code(code, JSON.parse(data[index].data), 2);  
-      addline(code, '}', 1)  
+  getMain().then(function(response) {
+    var data = response.data;
+    addline(code, 'public class ' + response.name_class +'(){', 0);
+    if(hasInput(data) == true){
+      addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
     }
-    addline(code, '}', 0);
-    translate(code);
+    addline(code, 'public static void main (String args[]){', 1);
+    rule2code(code, JSON.parse(data), 2);  
+    addline(code, '}', 1)  
+    getgetFungsi(code);
   }).catch(function(error) {
     console.log(error); // Handle any errors  
   });
@@ -222,6 +213,23 @@ function getFungsi(){
   });
 }
 
+function getgetFungsi(code){
+  getFungsi().then(function(response) {
+    var data = response.map(function(item) {
+      return item;
+    });
+    for (let index = 0; index < data.length; index++) {
+      addline(code, 'public static ' + data[index].function_type + " " + data[index].function_name + '(){', 1);
+      rule2code(code, JSON.parse(data[index].data), 2);  
+      addline(code, '}', 1)  
+    }
+    addline(code, '}', 0);
+    translate(code);
+  }).catch(function(error) {
+    console.log(error); // Handle any errors  
+  });
+}
+
 function rule2code(code, element, indent){
   for (let index = 0; index < element.length; index++) {
     var object = element[index];
@@ -230,8 +238,10 @@ function rule2code(code, element, indent){
     case "Declare":
       addline(code, object.dtype + " " + object.name + ";", indent);
       break;
-    case "Function":
-      addline(code, object.name + "();", indent);
+    case "Return":
+      if(element[0].type != "void"){
+        addline(code, "return " + object.value + ";", indent);
+      }
       break;
     case "Assign":
       addline(code, object.name + " = " + object.value + ";", indent);
@@ -290,6 +300,9 @@ function genInputBox(element, parent=null, branch=null){
           } else if (item.nodetype === 'Function') {
               $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
               $('<input>').attr('type', 'text').attr('name', 'type').attr('class', 'flowchart-input').val(item.type).appendTo(div);
+              $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
+          } else if (item.nodetype === 'Return') {
+              $('<input>').attr('type', 'text').attr('name', 'value').attr('class', 'flowchart-input').val(item.value).appendTo(div);
               $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
           } else if (item.nodetype === 'Input') {
               $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);

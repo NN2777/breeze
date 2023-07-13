@@ -489,6 +489,9 @@ function readFunction(element, object){
         case "int":
           scanner = "scanner.nextInt()";
           break;
+        case "float":
+          scanner = "scanner.nextFloat()";
+          break;  
         case "real":
           scanner = "scanner.nextDouble()";
           break;
