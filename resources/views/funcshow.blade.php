@@ -49,26 +49,27 @@
                   Main
                   </button>
                 </a>
-                <div class="col">
-                  <div class="my-column">
-                  @foreach ($fungsiAll as $func)
+                <table class="table">
+                  <tbody>
+                    <tr>
+                    </tr>
+                    @foreach ($fungsiAll as $func)
+                    <tr>
+                      <td>
                   <a href="{{ route('fungsi.index', ['id' => $func->id]) }}">
-                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:100%;text-align:left">
+                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;text-align:left">
                       {{ $func->function_name }}
                     </button>
-                  </a>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="my-column">
-                  <a href="{{ route('fungsi.delete', ['id' => $func->id]) }}">
-                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:100%;text-align:left">
+                  </a></td>
+                      <td><a href="{{ route('fungsi.delete', ['id' => $func->id]) }}">
+                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;text-align:left">
                       -
                     </button>
                   </a>
-                  @endforeach
-                  </div>
-                </div>
+                  @endforeach</td>
+                    </tr>
+                </tbody>
+                </table>
                 <a href="{{ route('fungsi.create', ['id' => $answer->id]) }}">
                   <button type="button" class="btn btn-secondary text-center" style="background-color:#6C757D;width:80%;text-align:left">
                     +

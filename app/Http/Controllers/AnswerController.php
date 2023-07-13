@@ -15,6 +15,16 @@ class AnswerController extends Controller
         return response()->json($parseddata);
     }
 
+    public function updateNameClass(Request $request, $id){
+        $updatedData = $request->input('nameclass'); // The updated value
+
+        $data = Answer::find($id); // <<<<<<<<<<<<<<<<<<<<<<<<<< disini
+
+        $data->name_class = $updatedData;
+        $data->save();
+        return response()->json(['success' => true]);
+    }
+
     
     public function updateData(Request $request, $id) //ini update nanti tambahin id
     {

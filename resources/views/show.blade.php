@@ -46,14 +46,32 @@
             <div class="card mt-2">
               <div class="card-body text-center">
                 <div class="row"></div>
-                  <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:80%;text-align:left">Main</button>
-                  @foreach ($fungsi as $func)
+                <a href="{{ route('show.page', ['userid' => auth()->id(), 'taskid' => $answer->task_id]) }}">
+                  <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:80%;text-align:left">
+                  Main
+                  </button>
+                </a>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                    </tr>
+                    @foreach ($fungsi as $func)
+                    <tr>
+                      <td>
                   <a href="{{ route('fungsi.index', ['id' => $func->id]) }}">
-                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:80%;text-align:left">
+                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;text-align:left">
                       {{ $func->function_name }}
                     </button>
+                  </a></td>
+                      <td><a href="{{ route('fungsi.delete', ['id' => $func->id]) }}">
+                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;text-align:left">
+                      -
+                    </button>
                   </a>
-                  @endforeach
+                  @endforeach</td>
+                    </tr>
+                </tbody>
+                </table>
                   <a href="{{ route('fungsi.create', ['id' => $answer->id]) }}">
                     <button type="button" class="btn btn-secondary text-center" style="background-color:#6C757D;width:80%;text-align:left">
                       +
@@ -85,6 +103,7 @@ function refresh(){
         if (getelement) {
           element.splice(0, 0, ...JSON.parse(getelement));
         }
+        nameclassbutton();
         codeBox(listjavacode, element);
         generateFlowchart(element);
         genInputBox(element, null, null);
@@ -174,6 +193,28 @@ function getFile(){
   // onclick = getFile()
 }
 
+function nameclassbutton() {
+  $('input[id="nameclass"]').on('change', function() {
+    var value = $(this).val(); // Get the updated value
+    $.ajax({
+        url: '{{ route("answer.updateclass", ["id" => $answer->id]) }}',
+        type: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            nameclass: value,
+        },
+        success: function(response) {
+           refresh();
+        },
+        error: function(xhr, status, error) {
+            console.log(error.response);
+        }
+    });
+  });
+}
+
 ///////////////// DOWNLOAD BUTTON GBS
 function downloadButton(listjavacode) {
   $('button[class="download-button"]').on('click', function() {
@@ -204,7 +245,7 @@ function downloadFile(listjavacode) {
 }
 
 function codeBox(code, element){
-  addline(code, 'public class myclass(){', 0);
+  addline(code, 'public class '+  '{{ $answer->name_class }}' +'(){', 0);
   if(hasInput(element) == true){
     addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
   }

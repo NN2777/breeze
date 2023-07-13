@@ -39,13 +39,15 @@ Route::middleware('auth')->group(function () {
     // Route::post('/add-json-data/{id}', [TaskController::class, 'addJsonData'])->name('add.jsondata');
     // Route::post('/del-json-data/{id}', [TaskController::class, 'delJsonData'])->name('del.jsondata');
     // Route::get('/show/{topicid}/{taskno}', [TaskController::class, 'show'])->name('show.page');
-
+    
     Route::get('/json-data/{id}', [AnswerController::class, 'getData'])->name('answer.data');
+    Route::post('/nameclass/{id}', [AnswerController::class, 'updateNameClass'])->name('answer.updateclass');
     Route::post('/update-data/{id}', [AnswerController::class, 'updateData'])->name('answer.updatedata');
     Route::post('/add-json-data/{id}', [AnswerController::class, 'addJsonData'])->name('answer.add.jsondata');
     Route::post('/del-json-data/{id}', [AnswerController::class, 'delJsonData'])->name('answer.del.jsondata');
     Route::get('/show/{userid}/{taskid}', [TaskController::class, 'show'])->name('show.page');
     Route::get('/code', [TaskController::class, 'getDownload'])->name('code.download');
+    Route::post('/task-create/{id}', [TaskController::class, 'create'])->name('task.create');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

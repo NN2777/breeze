@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\Fungsi;
 use App\Models\Answer;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -86,9 +87,39 @@ class TaskController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request, $id)
     {
-        //
+        $task = new Task();
+        $task->question = $request->input('question');
+        $task->topic_id = $id;
+        $tasknoLength = Task::where('topic_id', $id)->count();
+        $task->task_no = $tasknoLength + 1;
+        $task->save();
+
+        $users = User::all();
+        // dd($task->id);
+        $taskid = $task->id;
+        // Loop through users and create Answer records
+        foreach ($users as $user) {
+            $answer = new Answer();
+            $answer->user_id = $user->id;
+            $answer->task_id = $taskid;
+            $answer->name_class = "myclass";
+            $answer->data = json_encode([
+                [
+                    "id" => 1,
+                    "nodetype" => "Start",
+                ],
+                [
+                    "id" => 2,
+                    "nodetype" => "End",
+                ],
+            ]);
+            $answer->save();
+        }
+
+
+        return redirect()->route('topic', ['id' => $id]);
     }
 
     /**

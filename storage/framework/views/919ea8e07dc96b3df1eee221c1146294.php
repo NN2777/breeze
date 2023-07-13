@@ -58,7 +58,29 @@
                   Main
                   </button>
                 </a>
-                <div class="col">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                    </tr>
+                    <?php $__currentLoopData = $fungsiAll; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $func): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <tr>
+                      <td>
+                  <a href="<?php echo e(route('fungsi.index', ['id' => $func->id])); ?>">
+                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;text-align:left">
+                      <?php echo e($func->function_name); ?>
+
+                    </button>
+                  </a></td>
+                      <td><a href="<?php echo e(route('fungsi.delete', ['id' => $func->id])); ?>">
+                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;text-align:left">
+                      -
+                    </button>
+                  </a>
+                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></td>
+                    </tr>
+                </tbody>
+                </table>
+                <!-- <div class="col">
                   <div class="my-column">
                   <?php $__currentLoopData = $fungsiAll; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $func): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                   <a href="<?php echo e(route('fungsi.index', ['id' => $func->id])); ?>">
@@ -78,7 +100,7 @@
                   </a>
                   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                   </div>
-                </div>
+                </div> -->
                 <a href="<?php echo e(route('fungsi.create', ['id' => $answer->id])); ?>">
                   <button type="button" class="btn btn-secondary text-center" style="background-color:#6C757D;width:80%;text-align:left">
                     +
