@@ -20,7 +20,7 @@ use App\Http\Controllers\AnswerController;
 */
 
 Route::get('/', function () {
-    return view('login');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])
