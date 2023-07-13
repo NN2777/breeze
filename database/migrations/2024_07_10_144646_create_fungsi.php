@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('fungsi', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('topic_id');
-            $table->foreign('topic_id')->references('id')->on('topics')->onDelete('cascade');
-            $table->integer('task_no');
-            $table->text('question');
+            $table->string('function_name');
+            $table->string('function_type');
+            $table->json('data');
+            $table->unsignedBigInteger('answer_id');
+            $table->foreign('answer_id')->references('id')->on('answer')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('fungsi');
     }
 };

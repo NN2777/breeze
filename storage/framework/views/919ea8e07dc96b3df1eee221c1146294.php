@@ -18,7 +18,7 @@
         <div class="col-md-6">
           <div class="card mt-5">
             <div class="card-body text-center">
-              <input id="nameclass" type="text" value="<?php echo e($answer->name_class); ?>"> 
+              <input id="nameclass" type="text" value="<?php echo e($fungsi->function_name); ?>"> 
             </div>
             <div class="card-body">
               <div id="flowchart" style="text-align: center;"></div>
@@ -40,35 +40,50 @@
           </div>
           <div class="row">
             <div class="card mt-2">
-            <div class="card-body text-right">
-                <!-- <button class="download-button">DONWLOAD</button> -->
+              <div class="card-body text-right">
+                <p id="ling">DONWLOAD</p>
               </div>
               <div class="card-body">
-                <div style="position: relative; padding: 2rem 0 0.5rem 0; border-style: solid; border-color: black">
-                    <p id="codearea"></p>
-                    <ul id="item-list"></ul>
-                </div>
-                </div>
+                <p id="codearea"></p>
+                <ul id="item-list"></u>
+              </div>
             </div>
           </div>
           <div class="row">
             <div class="card mt-2">
               <div class="card-body text-center">
-                <div class="row"></div>
-                  <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:80%;text-align:left">Main</button>
-                  <?php $__currentLoopData = $fungsi; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $func): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="row">
+                <a href="<?php echo e(route('show.page', ['userid' => auth()->id(), 'taskid' => $answer->task_id])); ?>">
+                  <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:80%;text-align:left">
+                  Main
+                  </button>
+                </a>
+                <div class="col">
+                  <div class="my-column">
+                  <?php $__currentLoopData = $fungsiAll; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $func): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                   <a href="<?php echo e(route('fungsi.index', ['id' => $func->id])); ?>">
-                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:80%;text-align:left">
+                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:100%;text-align:left">
                       <?php echo e($func->function_name); ?>
 
                     </button>
                   </a>
-                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                  <a href="<?php echo e(route('fungsi.create', ['id' => $answer->id])); ?>">
-                    <button type="button" class="btn btn-secondary text-center" style="background-color:#6C757D;width:80%;text-align:left">
-                      +
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="my-column">
+                  <a href="<?php echo e(route('fungsi.delete', ['id' => $func->id])); ?>">
+                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:100%;text-align:left">
+                      -
                     </button>
                   </a>
+                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                  </div>
+                </div>
+                <a href="<?php echo e(route('fungsi.create', ['id' => $answer->id])); ?>">
+                  <button type="button" class="btn btn-secondary text-center" style="background-color:#6C757D;width:80%;text-align:left">
+                    +
+                  </button>
+                </a>
                 </div>
             </div>
           </div>
@@ -88,7 +103,7 @@ function refresh(){
   let element = [];
   let listjavacode = [];
   $.ajax({
-    url: '<?php echo e(route("answer.data", ["id" => $answer->id])); ?>',
+    url: '<?php echo e(route("fungsi.data", ["id" => $fungsi->id])); ?>',
     type: 'GET',
     success: function(response) {
         getelement = response.data;
@@ -96,9 +111,10 @@ function refresh(){
           element.splice(0, 0, ...JSON.parse(getelement));
         }
         codeBox(listjavacode, element);
+        console.log(listjavacode);
         generateFlowchart(element);
         genInputBox(element, null, null);
-        downloadButton(listjavacode);
+        // translate(listjavacode);
         change(element);
         delete2(element);
     },
@@ -177,42 +193,6 @@ function translateIdsInData(data) {
   return data.map((node) => translateIds(node));
 }
 
-function getFile(){
-  // ajax get jsondata
-  // recreate to current listjavacode
-  // peform downloadFile
-  // onclick = getFile()
-}
-
-///////////////// DOWNLOAD BUTTON GBS
-function downloadButton(listjavacode) {
-  $('button[class="download-button"]').on('click', function() {
-    downloadFile(listjavacode);
-    // console.log(listjavacode);
-  });
-}
-
-function downloadFile(listjavacode) {
-    var code = listjavacode;
-    // console.log(code);
-    $.ajax({
-        url: "<?php echo e(route('code.download')); ?>",
-        type: "GET",
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data: {
-            code: code,
-        },
-        success: function(response) {
-            // console.log(response);
-        },
-        error: function(xhr, status, error) {
-            // Handle any errors
-        }
-    });
-}
-
 function codeBox(code, element){
   addline(code, 'public class myclass(){', 0);
   if(hasInput(element) == true){
@@ -225,8 +205,9 @@ function codeBox(code, element){
     var data = response.map(function(item) {
       return item;
     });
+    console.log(data);
     for (let index = 0; index < data.length; index++) {
-      addline(code, 'public function ' + data[index].function_name + '(){', 1);
+      addline(code, 'public static ' + data[index].function_type + " " + data[index].function_name + '(){', 1);
       rule2code(code, JSON.parse(data[index].data), 2);  
       addline(code, '}', 1)  
     }
@@ -234,6 +215,13 @@ function codeBox(code, element){
     translate(code);
   }).catch(function(error) {
     console.log(error); // Handle any errors  
+  });
+}
+
+function getMain(){
+  return $.ajax({
+    url: "<?php echo e(route('answer.data', ['id' => $answer->id] )); ?>",
+    type: "GET"
   });
 }
 
@@ -254,7 +242,7 @@ function rule2code(code, element, indent){
       break;
     case "Function":
       addline(code, object.name + "();", indent);
-      break;  
+      break;
     case "Assign":
       addline(code, object.name + " = " + object.value + ";", indent);
       break;
@@ -309,6 +297,10 @@ function genInputBox(element, parent=null, branch=null){
               $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
               $('<input>').attr('type', 'text').attr('name', 'value').attr('class', 'flowchart-input').val(item.value).appendTo(div);
               $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
+          } else if (item.nodetype === 'Function') {
+              $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
+              $('<input>').attr('type', 'text').attr('name', 'type').attr('class', 'flowchart-input').val(item.type).appendTo(div);
+              $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
           } else if (item.nodetype === 'Input') {
               $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
               $('<input>').attr('type', 'text').attr('name', 'prompt').attr('class', 'flowchart-input').val(item.prompt).appendTo(div);
@@ -344,11 +336,8 @@ function genInputBox(element, parent=null, branch=null){
               }
               genInputBox(item.TrueBranch, thisparent, "TrueBranch");
               genInputBox(item.FalseBranch, thisparent, "FalseBranch");
-            } else if (item.nodetype === 'Function') {
-                $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
-                $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
-            } else if (item.nodetype === 'End') {
-                // $('<input>').attr('type', 'text').attr('name', 'prompt').attr('class', 'flowchart-input').val('ini end woy').appendTo(div);
+          } else if (item.nodetype === 'End') {
+              $('<input>').attr('type', 'text').attr('name', 'prompt').attr('class', 'flowchart-input').val('ini end woy').appendTo(div);
           }
           $('#edit').append(div);
         });
@@ -378,7 +367,7 @@ function change(element){
     updateValueInArray(element, dataIdSplit.branch.reverse(), dataIdSplit.idName, dataIdSplit.parent, property, value);
 
     $.ajax({
-        url: '<?php echo e(route("answer.updatedata", ["id" => $answer->id])); ?>',
+        url: '<?php echo e(route("fungsi.updatedata", ["id" => $fungsi->id])); ?>',
         type: 'POST',
         headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -410,7 +399,7 @@ function delete2(element){
     }
     var jsonData = element;
     $.ajax({
-              url: '<?php echo e(route("answer.del.jsondata", ["id" => $answer->id])); ?>',
+              url: '<?php echo e(route("fungsi.del.jsondata", ["id" => $fungsi->id])); ?>',
               type: 'POST',              
               headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -447,8 +436,7 @@ function findtheArraytoDel(data, branch, id, parent){
 }
 
 function deleteData(dataArray, position) {
-  // console.log(position, dataArray.length);
-  if (position >= 0 && position <= dataArray.length) {
+  if (position >= 0 && position < dataArray.length) {
     // Remove the data at the specified position
     dataArray.splice(position - 1, 1);
 
@@ -625,6 +613,7 @@ function defaultData(nodetype){
   return data;
 }
 
+
 function findtheArray(data, branch, id, parent, newValue) {
   let select = data[parent - 1];
   for (let i = 0; i < branch.length; i++) {
@@ -660,6 +649,7 @@ function addNewData(dataArray, newData, position) {
     dataArray.splice(position, 0, newData);
   }
 }
+
 
 function incrementId(item) {
   item.id = (parseInt(item.id) + 1).toString();
@@ -787,7 +777,7 @@ function showContextMenu(posX, posY, id, class1, label, element) {
             // console.log(jsonData);
 
             $.ajax({
-              url: '<?php echo e(route("answer.add.jsondata", ["id" => $answer->id])); ?>',
+              url: '<?php echo e(route("fungsi.add.jsondata", ["id" => $fungsi->id])); ?>',
               type: 'POST',              
               headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -889,7 +879,11 @@ function generateFlowchart(element) {
     switch (nodetype) {
         case "Function":
           var label = obj.name + "()";
-          nodes.push({ id: nodeId, shape: "rectangle", label: label });
+          nodes.push({ id: nodeId, shape: "circle", label: label });
+          break;
+        case "Return":
+          var label = obj.nodetype + " " + obj.value;
+          nodes.push({ id: nodeId, shape: "circle", label: label });
           break;
         case "Start":
           nodes.push({ id: nodeId, shape: "circle", label: "Start" });
@@ -1051,4 +1045,4 @@ function generateFlowchart(element) {
 <?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
 <?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
 <?php endif; ?>
-<?php /**PATH C:\Naufal Nafidiin\Koding\breeze\resources\views/show.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Naufal Nafidiin\Koding\breeze\resources\views/funcshow.blade.php ENDPATH**/ ?>

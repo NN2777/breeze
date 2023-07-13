@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TopicSeeder::class,
             TaskSeeder::class,
+            AnswerSeeder::class,
+            // FunctionSeeder::class,
         ]);
     }
 }

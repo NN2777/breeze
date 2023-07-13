@@ -9,7 +9,7 @@
         <div class="col-md-6">
           <div class="card mt-5">
             <div class="card-body text-center">
-              <!-- <input id="nameclass" type="text" value="{{ $task->name_class }}">  -->
+              <input id="nameclass" type="text" value="{{ $answer->name_class }}"> 
             </div>
             <div class="card-body">
               <div id="flowchart" style="text-align: center;"></div>
@@ -31,11 +31,34 @@
           </div>
           <div class="row">
             <div class="card mt-2">
+            <div class="card-body text-right">
+                <!-- <button class="download-button">DONWLOAD</button> -->
+              </div>
               <div class="card-body">
                 <div style="position: relative; padding: 2rem 0 0.5rem 0; border-style: solid; border-color: black">
                     <p id="codearea"></p>
                     <ul id="item-list"></ul>
                 </div>
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="card mt-2">
+              <div class="card-body text-center">
+                <div class="row"></div>
+                  <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:80%;text-align:left">Main</button>
+                  @foreach ($fungsi as $func)
+                  <a href="{{ route('fungsi.index', ['id' => $func->id]) }}">
+                    <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:80%;text-align:left">
+                      {{ $func->function_name }}
+                    </button>
+                  </a>
+                  @endforeach
+                  <a href="{{ route('fungsi.create', ['id' => $answer->id]) }}">
+                    <button type="button" class="btn btn-secondary text-center" style="background-color:#6C757D;width:80%;text-align:left">
+                      +
+                    </button>
+                  </a>
                 </div>
             </div>
           </div>
@@ -50,42 +73,24 @@ $(document).ready(function(){
 
 });
 
-// const nodeId = "FalseBranch_(FalseBranch_5_1)_1";
-// const node = findNodeById(data, nodeId);
-// console.log(node);
-
 function refresh(){
   let getelement = [];
   let element = [];
   let listjavacode = [];
   $.ajax({
-    url: '{{ route("task.data", ["id" => 8]) }}',
+    url: '{{ route("answer.data", ["id" => $answer->id]) }}',
     type: 'GET',
     success: function(response) {
         getelement = response.data;
         if (getelement) {
           element.splice(0, 0, ...JSON.parse(getelement));
         }
-        console.log(element);
-        // selectNodeByTranslatedId(translateIdsInData(element));
-        // const result = selectValue(translateIdsInData(element), "TrueBranch_TrueBranch_6_3_2");
-        // console.log(result);
-        // console.log(selectValue(translateIdsInData(element), "TrueBranch_6_3"))
-        // console.log(selectValue(translateIdsInData(element), "6"))
-        // console.log(selectNodeByTranslatedId(translateIdsInData(element), "(TrueBranch_(TrueBranch_6_3)_1)"))
-        // console.log(selectValue(translateIdsInData(element), "TrueBranch_TrueBranch_TrueBranch_6_3_2_2"))
         codeBox(listjavacode, element);
         generateFlowchart(element);
         genInputBox(element, null, null);
-        translate(listjavacode);
-        change();
+        downloadButton(listjavacode);
+        change(element);
         delete2(element);
-        // console.log(element);
-        // findtheArray(element, "TrueBranch_5_0");
-        // console.log(translateData(element));
-        // console.log(findObjectById(element, 6));
-        // console.log(element);
-        // Do something with the data array
     },
     error: function(xhr) {
         console.log(xhr.responseText);
@@ -93,82 +98,18 @@ function refresh(){
   });
 }
 
+function updateValueInArray(data, branch, id, parent, property, newValue) {
+  let select = data[parent - 1];
+  for (let i = 0; i < branch.length; i++) {
+    const currentBranch = branch[i];
+    const currentId = id[i] - 1;
+    console.log(currentId, currentBranch)
+    select = select[currentBranch][currentId];
+    console.log(select);
+  }
 
-  // -- kalo translatedId arraynya kurang dari satu langsung data[translatedId] 
-
-  // -- kalo translatedIdnya lebih dari satu
-  //    pecah dari tengah
-  //    branch = tengah kurang 1
-  //    id = tengah tambah 1
-// function selectNodeByTranslatedId(data){
-
-//   var damn = data[5];
-//   var damn1 = data[5]["TrueBranch"];
-//   var damn2 = damn1[2]["TrueBranch"];
-//   var damn3 = damn2[1];
-//   console.log(damn1, damn2, damn3);
-  
-// }
-
-// function selectNodeByTranslatedId(data, translatedId) {
-  
-//   const parts = translatedId.split("_");
-//   // if(parts[0]<1)
-//     var middle = (parts.length - 1)/2
-//     var branch = parts[middle - 1].replace(/\(/g, "");
-//     var id =  parts[middle +  1].replace(/\)/g, "");
-//     var parent = data[parts[middle] - 1][branch][id - 1];
-//     selectNodeByTranslatedId(parent, translatedId);
-
-//   for (let index = 0; index < (parts.length/2) - 2; index++) {
-//     var branch = parts[middle - (index + 1)].replace(/\(/g, "");
-//     var id =  parts[middle + (index + 1)].replace(/\)/g, "");
-//     var parent = data[parts[middle] - 1][branch][id - 1];
-//     console.log(parent);
-//     return parent;
-//   }
-// }
-
-// function selectNodeByTranslatedId(data, translatedId) {
-  
-//     const parts = translatedId.split("_");
-  
-//     var middle = (parts.length - 1)/2
-//     console.log(parts, parts[middle]);
-//     for (let index = 0; index < parts[middle]; index++) {
-//       var id = array[middle + index + 1];
-//       var branch = array[middle - index + 1];
-//     }
-//     // var parent = parts[middle].replace(/\)/g, "");
-//     // var branch = parts[middle - (index + 1)].replace(/\(/g, "");
-//     // var id =  parts[middle + (index + 1)].replace(/\)/g, "");
-//     // translatedId = translatedIdBefore - branch, parent, id selected;
-//     // var temp = data[parent - 1][branch][id]
-//     // selectNodeByTranslatedId(temp, translatedId)
-  
-
-//   return result;
-// }
-
-// function selectValue(data, path) {
-//   if (path.length === 0) {
-//     return data;
-//   }
-
-//   const [branch, parentId, id, ...remainingPath] = path;
-//   console.log(branch, parentId, id);
-//   let branchData;
-
-//   if (branch.startsWith('TrueBranch')) {
-//     branchData = data[parentId]['TrueBranch'];
-//   } else if (branch.startsWith('FalseBranch')) {
-//     branchData = data[parentId]['FalseBranch'];
-//   } else {
-//     branchData = data[branch];
-//   }
-
-//   return selectValue(branchData[id], [id, ...remainingPath]);
-// }
+  select[property] = newValue;
+}
 
 function selectNodeById(data, id) {
   for (const node of data) {
@@ -190,7 +131,6 @@ function selectNodeById(data, id) {
   }
   return null; // Node with the given ID not found
 }
-
 
 function translateIds(node, parentId = null, branchName = null, isOutermost = true) {
   const newNode = { ...node };
@@ -227,24 +167,71 @@ function translateIdsInData(data) {
   return data.map((node) => translateIds(node));
 }
 
+function getFile(){
+  // ajax get jsondata
+  // recreate to current listjavacode
+  // peform downloadFile
+  // onclick = getFile()
+}
+
+///////////////// DOWNLOAD BUTTON GBS
+function downloadButton(listjavacode) {
+  $('button[class="download-button"]').on('click', function() {
+    downloadFile(listjavacode);
+    // console.log(listjavacode);
+  });
+}
+
+function downloadFile(listjavacode) {
+    var code = listjavacode;
+    // console.log(code);
+    $.ajax({
+        url: "{{ route('code.download') }}",
+        type: "GET",
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            code: code,
+        },
+        success: function(response) {
+            // console.log(response);
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors
+        }
+    });
+}
+
 function codeBox(code, element){
   addline(code, 'public class myclass(){', 0);
   if(hasInput(element) == true){
     addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
   }
   addline(code, 'public static void main(String args[]){', 1);
-  // while (element.nodetype == 'End') {
-  //   addline(translate(statement)) //statement, all different value like prompt or etc from start to end
-  // }
-  // for (let index = 0; index < element.length; index++) {
-  //   addline(code, statement(element[index]), 2)
-  // }
-  // for (let index = 0; index < element.length; index++) {
-  //   statement2code(code, element[index], element);
-  // }
   rule2code(code, element, 2);
   addline(code, '}', 1);
-  addline(code, '}', 0);
+  getFungsi().then(function(response) {
+    var data = response.map(function(item) {
+      return item;
+    });
+    for (let index = 0; index < data.length; index++) {
+      addline(code, 'public function ' + data[index].function_name + '(){', 1);
+      rule2code(code, JSON.parse(data[index].data), 2);  
+      addline(code, '}', 1)  
+    }
+    addline(code, '}', 0);
+    translate(code);
+  }).catch(function(error) {
+    console.log(error); // Handle any errors  
+  });
+}
+
+function getFungsi(){
+  return $.ajax({
+    url: "{{ route('getAllFungsi', ['id' => $answer->id] ) }}",
+    type: "GET"
+  });
 }
 
 function rule2code(code, element, indent){
@@ -255,6 +242,9 @@ function rule2code(code, element, indent){
     case "Declare":
       addline(code, object.dtype + " " + object.name + ";", indent);
       break;
+    case "Function":
+      addline(code, object.name + "();", indent);
+      break;  
     case "Assign":
       addline(code, object.name + " = " + object.value + ";", indent);
       break;
@@ -321,8 +311,14 @@ function genInputBox(element, parent=null, branch=null){
               $('<input>').attr('type', 'text').attr('name', 'operator').attr('class', 'flowchart-input').val(item.operator).appendTo(div);
               $('<input>').attr('type', 'text').attr('name', 'value').attr('class', 'flowchart-input').val(item.value).appendTo(div);
               $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
-              genInputBox(item.TrueBranch, item.id, "TrueBranch");
-              genInputBox(item.FalseBranch, item.id, "FalseBranch");
+              var thisparent;
+              if(!branch && !parent){
+                thisparent = item.id;
+              }else {
+                thisparent = branch + "_" + parent + "_" + item.id;
+              }
+              genInputBox(item.TrueBranch, thisparent, "TrueBranch");
+              genInputBox(item.FalseBranch, thisparent, "FalseBranch");
           } else if (item.nodetype === 'Looping') {
               $('<input>').attr('type', 'text').attr('name', 'counter').attr('class', 'flowchart-input').val(item.counter).appendTo(div);
               $('<input>').attr('type', 'text').attr('name', 'start').attr('class', 'flowchart-input').val(item.start).appendTo(div);
@@ -330,31 +326,55 @@ function genInputBox(element, parent=null, branch=null){
               $('<input>').attr('type', 'text').attr('name', 'operator').attr('class', 'flowchart-input').val(item.operator).appendTo(div);
               $('<input>').attr('type', 'text').attr('name', 'increment').attr('class', 'flowchart-input').val(item.increment).appendTo(div);
               $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
-              genInputBox(item.TrueBranch, item.id, "TrueBranch");
-              genInputBox(item.FalseBranch, item.id, "FalseBranch");
-          } else if (item.nodetype === 'End') {
-              $('<input>').attr('type', 'text').attr('name', 'prompt').attr('class', 'flowchart-input').val('ini end woy').appendTo(div);
+              var thisparent;
+              if(!branch && !parent){
+                thisparent = item.id;
+              }else {
+                thisparent = branch + "_" + parent + "_" + item.id;
+              }
+              genInputBox(item.TrueBranch, thisparent, "TrueBranch");
+              genInputBox(item.FalseBranch, thisparent, "FalseBranch");
+            } else if (item.nodetype === 'Function') {
+                $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
+                $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
+            } else if (item.nodetype === 'End') {
+                // $('<input>').attr('type', 'text').attr('name', 'prompt').attr('class', 'flowchart-input').val('ini end woy').appendTo(div);
           }
           $('#edit').append(div);
         });
 }
 
-function change(){
+function splitId(id) {
+  var midIndex = Math.floor(id.length / 2);
+
+  var branch = id.slice(0, midIndex);
+  var parent = id[midIndex];
+  var idName = id.slice(midIndex + 1);
+
+  return {
+    branch: branch,
+    parent: parent,
+    idName: idName
+  };
+}
+
+function change(element){
   $('input[class="flowchart-input"]').on('change', function() {
     var dataId = $(this).parent().attr('id'); // Get the data ID from a data attribute or any other source
     var property = $(this).attr('name'); // Get the property name from a data attribute or any other source
     var value = $(this).val(); // Get the updated value
+    var dataIdSplit = splitId(dataId.split("_"));
+    var element2 = element;
+    updateValueInArray(element, dataIdSplit.branch.reverse(), dataIdSplit.idName, dataIdSplit.parent, property, value);
 
     $.ajax({
-        url: '/update-data',
+        url: '{{ route("answer.updatedata", ["id" => $answer->id]) }}',
         type: 'POST',
         headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data: {
-            dataId: dataId,
-            property: property,
-            value: value
+            element: element2,
         },
         success: function(response) {
            refresh()
@@ -371,12 +391,16 @@ function delete2(element){
     var dataId = $(this).parent().attr('id'); // Get the data ID from a data attribute or any other source
     var property = $(this).attr('name'); // Get the property name from a data attribute or any other source
     var value = $(this).val(); // Get the updated value
-    var data = element;
-    console.log(data);
-    findtheArraytoDel(data, dataId);
-    var jsonData = data;
+    var dataIdSplit = splitId(dataId.split("_"));
+    // console.log(dataIdSplit.branch.length, dataIdSplit.idName.length, dataIdSplit.parent);
+    if(dataIdSplit.branch.length == 0){
+      deleteData(element, dataIdSplit.parent);
+    } else {
+      findtheArraytoDel(element, dataIdSplit.branch.reverse(), dataIdSplit.idName, dataIdSplit.parent);
+    }
+    var jsonData = element;
     $.ajax({
-              url: '{{ route('del.jsondata') }}',
+              url: '{{ route("answer.del.jsondata", ["id" => $answer->id]) }}',
               type: 'POST',              
               headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -398,35 +422,23 @@ function delete2(element){
 });
 }
 
-function findtheArraytoDel(array, id){
-  var idSplit = id.split("_");
-  // var parts = title.split("_"); // Split the text string by underscores
-
-  var branch = idSplit[0];
-  var parentId = idSplit[1];
-  var theId = idSplit[2];
-  
-  // console.log(array[parentId - 1][branch], branch, parentId, theId);
-  console.log(array);
-
-  if(!parentId && !theId){
-    deleteData(array, branch);
-    // console.log(array);
-    // console.log(array[branch - 1]);
-  }else {
-    // array[parentId - 1][branch];
-    data = array[parentId - 1][branch];
-    deleteData(data, theId);
-    array[parentId - 1][branch] = data;
-    // console.log(array);
-    // console.log(array[parentId - 1][branch]);
+function findtheArraytoDel(data, branch, id, parent){
+  let select = data[parent - 1];
+  for (let i = 0; i < branch.length; i++) {
+    const currentBranch = branch[i];
+    const currentId = id[i] - 1;
+    if(i == branch.length - 1){
+      select = select[currentBranch];
+    } else {
+      select = select[currentBranch][currentId];
+    }
   }
-
-    console.log(array);
+  deleteData(select, id[id.length - 1]);
 }
 
 function deleteData(dataArray, position) {
-  if (position >= 0 && position < dataArray.length) {
+  // console.log(position, dataArray.length);
+  if (position >= 0 && position <= dataArray.length) {
     // Remove the data at the specified position
     dataArray.splice(position - 1, 1);
 
@@ -503,23 +515,18 @@ function readFunction(element, object){
   return line;
 }
 
-function searchshape(element, parent = null, branch = null, id){
-    var nodetype;
-    var indexParent = parent - 1;
-    var indexId = id - 1
-
-    console.log(id);
-
-    if (branch !== null) {;
-      var parentBranch = element[indexParent][branch];
-      if (parent !== null && element[indexParent] && element[indexParent][branch]) {
-        var parentBranch = element[indexParent][branch];
-        nodetype = parentBranch[indexId].nodetype;
-      }
+function searchshape(element, id){
+    var data;
+    var dataIdSplit = splitId(id.split("_"));
+    // console.log(dataIdSplit.branch.length, dataIdSplit.idName.length, dataIdSplit.parent);
+    if(dataIdSplit.branch.length == 0){
+      data = element[dataIdSplit.parent - 1];
     } else {
-      nodetype = element[indexId].nodetype;
+      // findtheArraytoDel(element, dataIdSplit.branch.reverse(), dataIdSplit.idName, dataIdSplit.parent);
+      data = selectValue(element, dataIdSplit.branch.reverse(), dataIdSplit.idName, dataIdSplit.parent);
     }
-    return nodetype; // Node not found
+    var nodetype = data.nodetype;
+    return nodetype;
 }
 
 function defaultData(nodetype){
@@ -535,6 +542,11 @@ function defaultData(nodetype){
     "nodetype": "Input",
     "name": "x",
     "prompt": "Masukkan Nilai"};
+  }
+  else if(nodetype == 'Function'){
+    data = {
+    "nodetype": "Function",
+    "name": "func"};
   }
   else if(nodetype == 'Assign'){
     data = {
@@ -603,36 +615,22 @@ function defaultData(nodetype){
   return data;
 }
 
-function findtheArray(array, id, newData){
-  var idSplit = id.split("_");
-  // var parts = title.split("_"); // Split the text string by underscores
-
-  var branch = idSplit[0];
-  var parentId = idSplit[1];
-  var theId = idSplit[2];
-  
-  // console.log(array[parentId - 1][branch], branch, parentId, theId);
-
-  if(!parentId && !theId){
-    addNewData(array, newData, branch);
-    // console.log(array);
-    // console.log(array[branch - 1]);
-  } else {
-    // array[parentId - 1][branch];
-    data = array[parentId - 1][branch];
-    addNewData(data, newData, theId);
-    array[parentId - 1][branch] = data;
-    // console.log(array);
-    // console.log(array[parentId - 1][branch]);
+function findtheArray(data, branch, id, parent, newValue) {
+  let select = data[parent - 1];
+  for (let i = 0; i < branch.length; i++) {
+    const currentBranch = branch[i];
+    const currentId = id[i] - 1;
+    if(i == branch.length - 1){
+      select = select[currentBranch];
+    } else {
+      select = select[currentBranch][currentId];
+    }
   }
-
-  // console.log(data);
-  // return data;
-  // kalo id[2] ada array = array[id[1]][branch]
-  // kalo id[2] kosong array = array;
+  addNewData(select, newValue, id[id.length - 1]);
 }
 
 function addNewData(dataArray, newData, position) {
+  console.log(dataArray, newData, position);
   if (position === dataArray.length) {
     // Set the new ID for the new data
     newData.id = (dataArray.length + 1).toString();
@@ -653,7 +651,6 @@ function addNewData(dataArray, newData, position) {
   }
 }
 
-// Function to recursively increment the ID of an item and its children
 function incrementId(item) {
   item.id = (parseInt(item.id) + 1).toString();
 
@@ -672,35 +669,14 @@ function showeditmenu(title){
     $(".prompt-area").hide();
     $("#" + title).show();
 }
-// INI FUNGSINYA YANG BENER
-function selectValue(data, path) {
-  const pathComponents = path.split('_');
-  
-  var select;
 
-  if (pathComponents.length > 1) {
-    const midIndex = Math.floor(pathComponents.length / 2);
-    // console.log(pathComponents);
-    const branches = pathComponents.slice(0, midIndex);
-    const ids = pathComponents.slice(midIndex + 1);
-    const parents = pathComponents[midIndex];
-    console.log(branches, ids, midIndex);
-    console.log(parents, branches[0], ids[ids.length - 1]);
-  
-    select = data[parents - 1][branches[branches.length - 1]][ids[0] - 1];
-    // var select2 = select["TrueBranch"][0];
-    console.log(select);
-    console.log(select[branches[0]]);
-
-    // INI NGITUNG DARI BRANCH TERDALEM BRANCH[BRANCH.LENGHT - 1] DAN ID TERDALEM ID[0]
-    for (let index = 1; index < midIndex; index++) {
-      select = select[branches[midIndex - index]][ids[index] - 1];
-      console.log(select);
-    }
-  } else {
-    select = data[path - 1];
+function selectValue(element, branch, id, parent){
+  let select = element[parent - 1];
+  for (let i = 0; i < branch.length; i++) {
+    const currentBranch = branch[i];
+    const currentId = id[i] - 1;
+    select = select[currentBranch][currentId];
   }
-
   return select;
 }
 
@@ -716,26 +692,7 @@ function nodeDot(element) {
               var id = d3.select(this).attr('id');
               var class1 = d3.select(this).attr('class');
               console.log(title);
-              var parts = title.split("_"); // Split the text string by underscores
-              var branch = parts[0]; // "FalseBranch"
-              var var1 = parseInt(parts[1]); // 5 (converted to integer)
-              var var2 = parseInt(parts[2]); // 0 (converted to integer)
-  
-              if (isNaN(var1)) {
-                var1 = null;
-              }
-  
-              if (isNaN(var2)) {
-                var2 = null;
-              }
-  
-              var nodetype;
-              console.log(branch, var1, var2);
-              if(var1==null & var2==null){
-                nodetype = searchshape(element, null, null, branch);
-              }else {
-                nodetype = searchshape(element, var1, branch, var2);
-              }
+              var nodetype = searchshape(element, title);
               console.log('Element id="%s" class="%s" title="%s" text="%s" nodetype="%s"', id, class1, title, text, nodetype);
               showeditmenu(title);
             }else if(mouseButton === 2){
@@ -799,6 +756,7 @@ function showContextMenu(posX, posY, id, class1, label, element) {
     contextMenu.append('div').text('Output').attr('class', 'contextMenu');
     contextMenu.append('div').text('Selection').attr('class', 'contextMenu');
     contextMenu.append('div').text('Looping').attr('class', 'contextMenu');
+    contextMenu.append('div').text('Function').attr('class', 'contextMenu');
 
     contextMenu.selectAll('.contextMenu')
         .on('click', function() {
@@ -807,13 +765,19 @@ function showContextMenu(posX, posY, id, class1, label, element) {
             console.log('Clicked on:', menuItem);
 
             var data = defaultData(menuItem);
-            //YANG INI COY
-            findtheArray(element, label, data);
+            var dataIdSplit = splitId(label.split("_"));
+            console.log(dataIdSplit.branch.length, dataIdSplit.idName.length, dataIdSplit.parent);
+            if(dataIdSplit.branch.length == 0){
+              addNewData(element, data, dataIdSplit.parent);
+            } else {
+              findtheArray(element, dataIdSplit.branch.reverse(), dataIdSplit.idName, dataIdSplit.parent, data);
+            }
 
             var jsonData = element;
+            // console.log(jsonData);
 
             $.ajax({
-              url: '{{ route('add.jsondata') }}',
+              url: '{{ route("answer.add.jsondata", ["id" => $answer->id]) }}',
               type: 'POST',              
               headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -824,7 +788,7 @@ function showContextMenu(posX, posY, id, class1, label, element) {
               },
               success: function(response) {
                   // Handle the success response
-                  console.log(response.data);                  
+                  // console.log(response.data);                  
                   refresh();
               },
               error: function(xhr) {
@@ -913,6 +877,10 @@ function generateFlowchart(element) {
 
   function processNode(nodeId, obj, nodetype){
     switch (nodetype) {
+        case "Function":
+          var label = obj.name + "()";
+          nodes.push({ id: nodeId, shape: "rectangle", label: label });
+          break;
         case "Start":
           nodes.push({ id: nodeId, shape: "circle", label: "Start" });
           break;
@@ -973,7 +941,7 @@ function generateFlowchart(element) {
   }
 
   function processEdge(element, from, to, label){
-    console.log(from, to);
+    // console.log(from, to);
     var res = isHaveBranch(element, from); // res = nodetype tapi karena nested id nya itu masih raw kek branch_parent_id nanti pisah dl
     if(res == "Selection"){
       from = "endif_" + from;
@@ -1019,7 +987,7 @@ function generateFlowchart(element) {
 
   function isHaveBranch(element, id){
     var nodetype;
-    console.log(id);
+    // console.log(id);
     if (isNaN(id)) {
       fromsplit = id.split("_");
       id = fromsplit[fromsplit.length - 1] - 1;
@@ -1029,7 +997,7 @@ function generateFlowchart(element) {
 
     // INI GK BISA IDENTIFY ID BRANCH ATAS
 
-    console.log(element, id, element[id]);
+    // console.log(element, id, element[id]);
     if (element[id]?.nodetype == "Selection") {
       nodetype = element[id].nodetype;
     }else if (element[id]?.nodetype == "Looping"){

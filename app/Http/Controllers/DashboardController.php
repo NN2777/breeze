@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Task;
 use App\Models\Topic;
+use App\Models\Answer;
 
 class DashboardController extends Controller
 {
@@ -30,7 +32,7 @@ class DashboardController extends Controller
 
     public function getData($id)
     {
-        $data = Task::where('topic_id', $id)->orderBy('task_no', 'asc')->get();
+        $data = Task::where('topic_id', $id)->orderBy('task_no', 'asc')->get(); 
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -43,7 +45,7 @@ class DashboardController extends Controller
             ->addColumn('aksi', function ($data) {
                 return '
                 <div class="btn-group">
-                    <a href="' . route('show.page', $data->id) . '" class="btn btn-xs btn-info btn-flat">Show</a>
+                    <a href="' . route('show.page', [Auth::id(), $data->id]) . '" class="btn btn-xs btn-info btn-flat">Show</a>
                 ';
             })
             ->rawColumns(['aksi'])
