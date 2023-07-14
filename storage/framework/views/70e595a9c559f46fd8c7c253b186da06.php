@@ -300,11 +300,11 @@ function rule2code(code, element, indent){
       addline(code, object.name + " = " + object.value + ";", indent);
       break;
     case "Input":
-      addline(code, "System.out.println("+ "'" + object.prompt + " " + object.name + "'" + ");", indent);
+      addline(code, "System.out.println("+ '"' + object.prompt + " " + object.name + '"' + ");", indent);
       addline(code, readFunction(element, object), indent);
       break;
     case "Output":
-      addline(code ,"System.out.println("+ "'" + object.prompt + "'" +");", indent);
+      addline(code ,"System.out.println("+ '"' + object.prompt + '"' +");", indent);
       break;
     case "Selection":
       addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
