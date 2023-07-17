@@ -102,28 +102,27 @@
 
       <!-- Modal -->
       <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-          <div class="modal-dialog">
-            <form action="<?php echo e(route('task.create', ['id' => $topic->id])); ?>" method="POST" enctype="multipart/form-data">
-              <?php echo csrf_field(); ?>
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel2">Tulis pertanyaan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  <div class="mb-3">
-                    <input type="text" id="question" name="question">
-                  </div>
-                  <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" style="background-color:#0D6EFD">Save changes</button>
-                  </div>
-              </div>
-            </div>
-          </form>
+  <div class="modal-dialog">
+    <form action="<?php echo e(route('task.create', ['id' => $topic->id])); ?>" method="POST" enctype="multipart/form-data">
+      <?php echo csrf_field(); ?>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">Tulis pertanyaan</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <input type="text" id="question" name="question">
           </div>
         </div>
-      </div>    
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color:#0D6EFD">Close</button>
+          <button type="submit" class="btn btn-primary" style="background-color:#0D6EFD">Save changes</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>    
       
       <script>
           $(document).ready(function() {

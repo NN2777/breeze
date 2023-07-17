@@ -16,8 +16,9 @@ class TaskController extends Controller
     {   
         $answer = Answer::where([['user_id', $userid],['task_id', $taskid]])->first();
         $fungsi = Fungsi::where('answer_id', $answer->id)->get();
+        $task = Task::where('id', $taskid)->first();
         // return view('show', compact('task', 'fungsi'));
-        return view('show', compact('answer', 'fungsi'));
+        return view('show', compact('answer', 'fungsi', 'task'));
     }
 
     public function getData($id)
@@ -109,6 +110,7 @@ class TaskController extends Controller
                 [
                     "id" => 1,
                     "nodetype" => "Start",
+                    "parameter" => ""
                 ],
                 [
                     "id" => 2,

@@ -42,12 +42,27 @@ class FungsiController extends Controller
         return response()->json($parseddata);
     }
 
+    // public function updateNameFunc(Request $request, $id) //ini update nanti tambahin id
+    // {
+    //     $updatedData = $request->input('value'); // The updated value
+ 
+    //     $data = Fungsi::find($id); // <<<<<<<<<<<<<<<<<<<<<<<<<< disini
+    //     $data->function_name = $updatedData[0]['name'];
+        
+    //     $updatedFlowchart = json_encode($updatedData);
+
+    //     $data->data = $updatedFlowchart;
+    //     $data->save();
+    //     return response()->json(['success' => true]);
+    // }
+
     public function updateData(Request $request, $id) //ini update nanti tambahin id
     {
         $updatedData = $request->input('element'); // The updated value
  
         $data = Fungsi::find($id); // <<<<<<<<<<<<<<<<<<<<<<<<<< disini
         $data->function_type = $updatedData[0]['type'];
+        $data->function_name = $updatedData[0]['name'];
         
         $updatedFlowchart = json_encode($updatedData);
 
@@ -98,6 +113,7 @@ class FungsiController extends Controller
                 "nodetype" => "Function",
                 "name" => "func",
                 "type" => "void",
+                "parameter" => "",
             ],
             [
                 "id" => 2,

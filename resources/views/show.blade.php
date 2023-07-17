@@ -20,8 +20,18 @@
           </div>
         </div>
         <div class="col-md-6">
-          <div class="row">
+        <div class="row">
             <div class="card mt-5">
+              <div class="card-body">
+              <p class="h1">Question</p>
+              <div style="text-align: left;">
+                      <h1>{{ $task->question }}</h1>
+                    </div>  
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="card mt-2">
               <div class="card-body">
                 <div style="position: relative; padding: 2rem 0 0.5rem 0; border-style: solid; border-color: black">
                     <div id="edit" style="text-align: center;"></div>
@@ -103,11 +113,12 @@ function refresh(){
         if (getelement) {
           element.splice(0, 0, ...JSON.parse(getelement));
         }
+        console.log(element);
         nameclassbutton();
         codeBox(listjavacode, element);
         generateFlowchart(element);
         genInputBox(element, null, null);
-        downloadButton(listjavacode);
+        // downloadButton(listjavacode);
         change(element);
         delete2(element);
     },
@@ -257,8 +268,8 @@ function codeBox(code, element){
       return item;
     });
     for (let index = 0; index < data.length; index++) {
-      addline(code, 'public function ' + data[index].function_name + '(){', 1);
-      rule2code(code, JSON.parse(data[index].data), 2);  
+      addline(code, 'public function ' + data[index].function_type +" " + data[index].function_name + '(){', 1);
+      rule2codefunc(code, JSON.parse(data[index].data), 2);  
       addline(code, '}', 1)  
     }
     addline(code, '}', 0);
@@ -284,8 +295,52 @@ function rule2code(code, element, indent){
       addline(code, object.dtype + " " + object.name + ";", indent);
       break;
     case "Function":
-      addline(code, object.name + "();", indent);
+      addline(code, object.name + "(" + object.parameter + ");", indent);
       break;  
+    case "Assign":
+      addline(code, object.name + " = " + object.value + ";", indent);
+      break;
+    case "Input":
+      addline(code, "System.out.println("+ '"' + object.prompt + " " + object.name + '"' + ");", indent);
+      addline(code, readFunction(element, object), indent);
+      break;
+    case "Output":
+      addline(code ,"System.out.println("+ '"' + object.prompt + '"' +");", indent);
+      break;
+    case "Selection":
+      addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
+      rule2code(code, object.TrueBranch, indent + 1);
+      addline(code, "} else { ", indent);
+      rule2code(code, object.FalseBranch, indent + 1);
+      addline(code, "}", indent);
+      break;
+    case "Looping":
+      addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
+      rule2code(code, object.TrueBranch, indent + 1);
+      addline(code, "}", indent);
+      break;
+    default:
+      // console.log("dongo");
+    }
+  }
+}
+
+function rule2codefunc(code, element, indent){
+  for (let index = 0; index < element.length; index++) {
+    var object = element[index];
+    // console.log(object);
+    switch (object.nodetype) {
+    case "Declare":
+      addline(code, object.dtype + " " + object.name + ";", indent);
+      break;
+    case "Return":
+      addline(code, "return " + object.value +  ";", indent);
+      break;   
+    case "Function":
+      if (index != 0) {
+        addline(code, object.name + "();", indent);
+      }
+      break;
     case "Assign":
       addline(code, object.name + " = " + object.value + ";", indent);
       break;
@@ -377,6 +432,7 @@ function genInputBox(element, parent=null, branch=null){
               genInputBox(item.FalseBranch, thisparent, "FalseBranch");
             } else if (item.nodetype === 'Function') {
                 $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
+                $('<input>').attr('type', 'text').attr('name', 'parameter').attr('class', 'flowchart-input').val(item.parameter).appendTo(div);
                 $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
             } else if (item.nodetype === 'End') {
                 // $('<input>').attr('type', 'text').attr('name', 'prompt').attr('class', 'flowchart-input').val('ini end woy').appendTo(div);
@@ -594,7 +650,8 @@ function defaultData(nodetype){
   else if(nodetype == 'Function'){
     data = {
     "nodetype": "Function",
-    "name": "func"};
+    "name": "func",
+    "parameter": "int a"};
   }
   else if(nodetype == 'Assign'){
     data = {
@@ -647,14 +704,6 @@ function defaultData(nodetype){
         "dtype": "String"
       },
       ],
-      "FalseBranch" : [
-        {
-          "id":"1",
-          "nodetype": "Declare",
-          "name": "loop",
-          "dtype": "String"
-        },
-      ]
     };
   } else {
 
@@ -901,8 +950,8 @@ function generateFlowchart(element) {
   function processElement(element, parent = "", branch = "") {
     for (let index = 0; index < element.length; index++) {
       var obj = element[index];
-      var nodeId;
       var prevObj = element[index - 1];
+      var nodeId;
       var prevId;
       var nodetype = obj.nodetype;
 
@@ -913,7 +962,7 @@ function generateFlowchart(element) {
           nodeId = obj.id;
           prevId = prevObj?.id;
         }
-
+      
       if(obj == element[0]){
         processNode(nodeId, obj, nodetype);
       } else {
@@ -926,7 +975,7 @@ function generateFlowchart(element) {
   function processNode(nodeId, obj, nodetype){
     switch (nodetype) {
         case "Function":
-          var label = obj.name + "()";
+          var label = obj.name + " (" + obj.parameter + ")";
           nodes.push({ id: nodeId, shape: "rectangle", label: label });
           break;
         case "Start":
@@ -938,7 +987,7 @@ function generateFlowchart(element) {
           break;
         case "Assign":
           var label = obj.name + " = " + obj.value;
-          nodes.push({ id: nodeId, shape: "rectangle", label: label });
+          nodes.push({ id: nodeId, shape: "record", label: "<f0> |<f1>" + label + " |<f2> " });
           break;
         case "Input":
           var label = obj.prompt + " " + obj.name;
@@ -967,7 +1016,7 @@ function generateFlowchart(element) {
         case "Looping":
           var label = obj.counter + " = " + obj.start + "; " + obj.counter  + " " + obj.operator + " " + obj.condition +  "; " + obj.counter + obj.increment;
           nodes.push({ id: nodeId, shape: "diamond", label: label });
-          nodes.push({ id: "endfor_" + nodeId, shape: "doublecircle", label: "endloop" });
+          // nodes.push({ id: "endfor_" + nodeId, shape: "doublecircle", label: "endloop" });
           // processNode(nodeId + "_endif", null, "Endif", nodeId);
           
           if (obj.TrueBranch) {
@@ -975,10 +1024,10 @@ function generateFlowchart(element) {
             processBranchForTrue(obj.TrueBranch, nodeId, "TrueBranch");
           }
 
-          if (obj.FalseBranch) {
-            // Generate nodes for FalseBranch
-            processBranchForFalse(obj.FalseBranch, nodeId, "FalseBranch");
-          }
+          // if (obj.FalseBranch) {
+          //   // Generate nodes for FalseBranch
+          //   processBranchForFalse(obj.FalseBranch, nodeId, "FalseBranch");
+          // }
           break;
         case "End":
           nodes.push({ id: nodeId, shape: "circle", label: "End" });
@@ -989,25 +1038,23 @@ function generateFlowchart(element) {
   }
 
   function processEdge(element, from, to, label){
-    // console.log(from, to);
     var res = isHaveBranch(element, from); // res = nodetype tapi karena nested id nya itu masih raw kek branch_parent_id nanti pisah dl
+    console.log(from, to, res);
+    // console.log(res);
     if(res == "Selection"){
-      from = "endif_" + from;
-      // console.log(from, to);
+      from = "endif_" + from; //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<SALAH DISINI KENA MASUK LOOP, APAKAH SEBELUMNYA SELECTION
     }else if(res == "Looping"){
-      from = "endfor_" + from;
+      from = from;
     }else {
       from = from;
     }
-    // console.log(from, to);
-    // console.log(res, element, from, to);
     edges.push({ from: from, to: to, label:label });
   }
 
   function processBranchForTrue(element, parent, branch){
     processEdge(element, parent, processIdFormat(element[0].id, parent, branch), processIdFormat(0, parent, branch));
     processElement(element, parent, branch);
-    processEdge(element, processIdFormat(element[element.length - 1].id, parent, branch), "endfor_" + parent, processIdFormat(element.length, parent, branch));
+    processEdge(element, processIdFormat(element[element.length - 1].id, parent, branch), parent, processIdFormat(element.length, parent, branch));
   }
 
   function processBranchForFalse(element, parent, branch){
@@ -1017,8 +1064,8 @@ function generateFlowchart(element) {
   }
 
   function processBranchIf(element, parent, branch){
-    // console.log(element, parent, branch);
     processEdge(element, parent, processIdFormat(element[0].id, parent, branch), processIdFormat(0, parent, branch));
+    //^^^^^^^^^^^^^ INI DULU YG DI PROSES, PAS NESTED KALO
     processElement(element, parent, branch);
     processEdge(element, processIdFormat(element[element.length - 1].id, parent, branch), "endif_" + parent, processIdFormat(element.length, parent, branch));
   }
@@ -1069,6 +1116,11 @@ function generateFlowchart(element) {
 
   
   dot += '}';
+
+  // console.log(dot);
+
+  // console.log(nodes);
+  console.log(edges);
 
   graphviz
     .renderDot(dot)

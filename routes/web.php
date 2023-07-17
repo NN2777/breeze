@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/fungsi/add-json-data/{id}', [FungsiController::class, 'addJsonData'])->name('fungsi.add.jsondata');
     Route::post('/fungsi/del-json-data/{id}', [FungsiController::class, 'delJsonData'])->name('fungsi.del.jsondata');
     Route::get('/get-fungsi/{id}', [FungsiController::class, 'getAllFungsi'])->name('getAllFungsi');
+    Route::post('/fungsi-nameclass/{id}', [FungsiController::class, 'updateNameFunc'])->name('fungsi.updatename');
     // Route::get('/get-fungsi/{id}', [FungsiController::class, 'getAllFungsi'])->name('getTask');
 });
 
