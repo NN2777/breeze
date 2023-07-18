@@ -128,7 +128,6 @@ function refresh(){
         codeBox(listjavacode, element);
         generateFlowchart(element);
         genInputBox(element, null, null);
-        // downloadButton(listjavacode);
         change(element);
         delete2(element);
     },
@@ -266,20 +265,22 @@ function downloadFile(listjavacode) {
 }
 
 function codeBox(code, element){
-  addline(code, 'public class '+  '<?php echo e($answer->name_class); ?>' +'(){', 0);
-  if(hasInput(element) == true){
-    addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
-  }
-  addline(code, 'public static void main(String args[]){', 1);
-  rule2code(code, element, 2);
-  addline(code, '}', 1);
   getFungsi().then(function(response) {
     var data = response.map(function(item) {
       return item;
     });
+    let allcode = [element];
+    for (let index = 0; index < data.length; index++) {
+      allcode.push(JSON.parse(data[index].data));
+    }
+    addline(code, 'public class '+  '<?php echo e($answer->name_class); ?>' +'(){', 0);
+    addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
+    addline(code, 'public static void main(String args[]){', 1);
+    rule2code(code, element, allcode, 2);
+    addline(code, '}', 1);
     for (let index = 0; index < data.length; index++) {
       addline(code, 'public function ' + data[index].function_type +" " + data[index].function_name + '(){', 1);
-      rule2codefunc(code, JSON.parse(data[index].data), 2);  
+      rule2codefunc(code, JSON.parse(data[index].data), allcode, 2);  
       addline(code, '}', 1)  
     }
     addline(code, '}', 0);
@@ -296,10 +297,9 @@ function getFungsi(){
   });
 }
 
-function rule2code(code, element, indent){
+function rule2code(code, element, allelement, indent){
   for (let index = 0; index < element.length; index++) {
     var object = element[index];
-    // console.log(object);
     switch (object.nodetype) {
     case "Declare":
       addline(code, object.dtype + " " + object.name + ";", indent);
@@ -312,21 +312,21 @@ function rule2code(code, element, indent){
       break;
     case "Input":
       addline(code, "System.out.println("+ '"' + object.prompt + " " + object.name + '"' + ");", indent);
-      addline(code, readFunction(element, object), indent);
+      addline(code, readFunction(allelement, object), indent);
       break;
     case "Output":
       addline(code ,"System.out.println("+ '"' + object.prompt + '"' +");", indent);
       break;
     case "Selection":
       addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
-      rule2code(code, object.TrueBranch, indent + 1);
+      rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "} else { ", indent);
-      rule2code(code, object.FalseBranch, indent + 1);
+      rule2code(code, object.FalseBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
     case "Looping":
       addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
-      rule2code(code, object.TrueBranch, indent + 1);
+      rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
     default:
@@ -335,7 +335,7 @@ function rule2code(code, element, indent){
   }
 }
 
-function rule2codefunc(code, element, indent){
+function rule2codefunc(code, element, allelement, indent){
   for (let index = 0; index < element.length; index++) {
     var object = element[index];
     // console.log(object);
@@ -356,21 +356,21 @@ function rule2codefunc(code, element, indent){
       break;
     case "Input":
       addline(code, "System.out.println("+ '"' + object.prompt + " " + object.name + '"' + ");", indent);
-      addline(code, readFunction(element, object), indent);
+      addline(code, readFunction(allelement, object), indent);
       break;
     case "Output":
       addline(code ,"System.out.println("+ '"' + object.prompt + '"' +");", indent);
       break;
     case "Selection":
       addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
-      rule2code(code, object.TrueBranch, indent + 1);
+      rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "} else { ", indent);
-      rule2code(code, object.FalseBranch, indent + 1);
+      rule2code(code, object.FalseBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
     case "Looping":
       addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
-      rule2code(code, object.TrueBranch, indent + 1);
+      rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
     default:
@@ -584,19 +584,40 @@ function hasInput(array) {
   return false;
 }
 
-function isVariable(array){
-  
+function readFunction2(dataArray, name) {
+  for (let i = 0; i < dataArray.length; i++) {
+    const data = dataArray[i];
+    if (Array.isArray(data)) {
+      const nestedResult = readFunction2(data, name);
+      if (nestedResult) {
+        return nestedResult;
+      }
+    } else if (data.nodetype === "Declare" && data.name === name) {
+      return data.dtype;
+    }
+    if (data.TrueBranch) {
+      const trueBranchResult = readFunction2(data.TrueBranch, name);
+      if (trueBranchResult) {
+        return trueBranchResult;
+      }
+    }
+    if (data.FalseBranch) {
+      const falseBranchResult = readFunction2(data.FalseBranch, name);
+      if (falseBranchResult) {
+        return falseBranchResult;
+      }
+    }
+  }
+  return null; // Return null if the matching object is not found
 }
 
 function readFunction(element, object){
   let name; 
   let dtype;
   let scanner;
-  for (let index = 0; index < element.length; index++) {
-    if(element[index].nodetype == "Declare" && element[index].name == object.name){
-      name = element[index].name;
-      dtype = element[index].dtype;
-      switch (dtype) {
+  dtype = readFunction2(element, object.name);
+  name = object.name;
+  switch (dtype) {
         case "int":
           scanner = "scanner.nextInt()";
           break;
@@ -619,13 +640,8 @@ function readFunction(element, object){
           console.log("I don't know what fruit this is.");
           break;
       }
-    }else{
-      continue;
-    }
-    break;
-
-  }
   let line = name + " = " + scanner + ";";
+  console.log(dtype, line);
   return line;
 }
 
@@ -986,7 +1002,7 @@ function generateFlowchart(element) {
     switch (nodetype) {
         case "Function":
           var label = obj.name + " (" + obj.parameter + ")";
-          nodes.push({ id: nodeId, shape: "rectangle", label: label });
+          nodes.push({ id: nodeId, shape: "record", label: "<f0> |<f1>" + label + " |<f2> " });
           break;
         case "Start":
           nodes.push({ id: nodeId, shape: "circle", label: "Start" });
@@ -997,7 +1013,7 @@ function generateFlowchart(element) {
           break;
         case "Assign":
           var label = obj.name + " = " + obj.value;
-          nodes.push({ id: nodeId, shape: "record", label: "<f0> |<f1>" + label + " |<f2> " });
+          nodes.push({ id: nodeId, shape: "rectangle", label: label});
           break;
         case "Input":
           var label = obj.prompt + " " + obj.name;
@@ -1052,7 +1068,7 @@ function generateFlowchart(element) {
     console.log(from, to, res);
     // console.log(res);
     if(res == "Selection"){
-      from = "endif_" + from; //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<SALAH DISINI KENA MASUK LOOP
+      from = "endif_" + from; //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<SALAH DISINI KENA MASUK LOOP, APAKAH SEBELUMNYA SELECTION
     }else if(res == "Looping"){
       from = from;
     }else {
@@ -1075,6 +1091,7 @@ function generateFlowchart(element) {
 
   function processBranchIf(element, parent, branch){
     processEdge(element, parent, processIdFormat(element[0].id, parent, branch), processIdFormat(0, parent, branch));
+    //^^^^^^^^^^^^^ INI DULU YG DI PROSES, PAS NESTED KALO
     processElement(element, parent, branch);
     processEdge(element, processIdFormat(element[element.length - 1].id, parent, branch), "endif_" + parent, processIdFormat(element.length, parent, branch));
   }

@@ -9,7 +9,7 @@
         <div class="col-md-6">
           <div class="card mt-5">
             <div class="card-body text-center">
-              <!-- <input class="nameclass" type="text" value="{{ $fungsi->function_name }}">  -->
+              <input id="nameclass" type="text" value="{{ $answer->name_class }}"> 
             </div>
             <div class="card-body">
               <div id="flowchart" style="text-align: center;"></div>
@@ -20,8 +20,18 @@
           </div>
         </div>
         <div class="col-md-6">
-          <div class="row">
+        <div class="row">
             <div class="card mt-5">
+              <div class="card-body">
+              <p class="h1">Question</p>
+              <div style="text-align: left;">
+                      <h1>{{ $task->question }}</h1>
+                    </div>  
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="card mt-2">
               <div class="card-body">
                 <div style="position: relative; padding: 2rem 0 0.5rem 0; border-style: solid; border-color: black">
                     <div id="edit" style="text-align: center;"></div>
@@ -31,19 +41,21 @@
           </div>
           <div class="row">
             <div class="card mt-2">
-              <div class="card-body text-right">
-                <!-- <p id="ling">DONWLOAD</p> -->
+            <div class="card-body text-right">
+                <!-- <button class="download-button">DONWLOAD</button> -->
               </div>
               <div class="card-body">
-                <p id="codearea"></p>
-                <ul id="item-list"></u>
-              </div>
+                <div style="position: relative; padding: 2rem 0 0.5rem 0; border-style: solid; border-color: black">
+                    <p id="codearea"></p>
+                    <ul id="item-list"></ul>
+                </div>
+                </div>
             </div>
           </div>
           <div class="row">
             <div class="card mt-2">
               <div class="card-body text-center">
-                <div class="row">
+                <div class="row"></div>
                 <a href="{{ route('show.page', ['userid' => auth()->id(), 'taskid' => $answer->task_id]) }}">
                   <button type="button" class="btn btn-secondary" style="background-color:#6C757D;width:80%;text-align:left">
                   Main
@@ -53,7 +65,7 @@
                   <tbody>
                     <tr>
                     </tr>
-                    @foreach ($fungsiAll as $func)
+                    @foreach ($fungsi as $func)
                     <tr>
                       <td>
                   <a href="{{ route('fungsi.index', ['id' => $func->id]) }}">
@@ -70,11 +82,11 @@
                     </tr>
                 </tbody>
                 </table>
-                <a href="{{ route('fungsi.create', ['id' => $answer->id]) }}">
-                  <button type="button" class="btn btn-secondary text-center" style="background-color:#6C757D;width:80%;text-align:left">
-                    +
-                  </button>
-                </a>
+                  <a href="{{ route('fungsi.create', ['id' => $answer->id]) }}">
+                    <button type="button" class="btn btn-secondary text-center" style="background-color:#6C757D;width:80%;text-align:left">
+                      +
+                    </button>
+                  </a>
                 </div>
             </div>
           </div>
@@ -94,19 +106,18 @@ function refresh(){
   let element = [];
   let listjavacode = [];
   $.ajax({
-    url: '{{ route("fungsi.data", ["id" => $fungsi->id]) }}',
+    url: '{{ route("answer.data", ["id" => $answer->id]) }}',
     type: 'GET',
     success: function(response) {
         getelement = response.data;
         if (getelement) {
           element.splice(0, 0, ...JSON.parse(getelement));
         }
-        // namefuncbutton();
+        console.log(element);
+        nameclassbutton();
         codeBox(listjavacode, element);
-        console.log(listjavacode);
         generateFlowchart(element);
         genInputBox(element, null, null);
-        // translate(listjavacode);
         change(element);
         delete2(element);
     },
@@ -185,41 +196,88 @@ function translateIdsInData(data) {
   return data.map((node) => translateIds(node));
 }
 
-// function namefuncbutton() {
-//   $('input[class="nameclass"]').on('change', function() {
-//     var value = $(this).val(); // Get the updated value
-//     $.ajax({
-//         url: '{{ route("fungsi.updatename", ["id" => $fungsi->id]) }}',
-//         type: 'POST',
-//         headers: {
-//           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//         },
-//         data: {
-//             value: value,
-//         },
-//         success: function(response) {
-//            refresh();
-//         },
-//         error: function(xhr, status, error) {
-//             console.log(error.response);
-//         }
-//     });
-//   });
-// }
+function getFile(){
+  // ajax get jsondata
+  // recreate to current listjavacode
+  // peform downloadFile
+  // onclick = getFile()
+}
 
-function codeBox(code, element){
-  getMain().then(function(response) {
-    var mainData = response;
-    getgetFungsi(code, element, mainData);
-  }).catch(function(error) {
-    console.log(error); // Handle any errors  
+function nameclassbutton() {
+  $('input[id="nameclass"]').on('change', function() {
+    var value = $(this).val(); // Get the updated value
+    $.ajax({
+        url: '{{ route("answer.updateclass", ["id" => $answer->id]) }}',
+        type: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            nameclass: value,
+        },
+        success: function(response) {
+           refresh();
+        },
+        error: function(xhr, status, error) {
+            console.log(error.response);
+        }
+    });
   });
 }
 
-function getMain(){
-  return $.ajax({
-    url: "{{ route('answer.data', ['id' => $answer->id] ) }}",
-    type: "GET"
+///////////////// DOWNLOAD BUTTON GBS
+function downloadButton(listjavacode) {
+  $('button[class="download-button"]').on('click', function() {
+    downloadFile(listjavacode);
+    // console.log(listjavacode);
+  });
+}
+
+function downloadFile(listjavacode) {
+    var code = listjavacode;
+    // console.log(code);
+    $.ajax({
+        url: "{{ route('code.download') }}",
+        type: "GET",
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            code: code,
+        },
+        success: function(response) {
+            // console.log(response);
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors
+        }
+    });
+}
+
+function codeBox(code, element){
+  addline(code, 'public class '+  '{{ $answer->name_class }}' +'(){', 0);
+  if(hasInput(element) == true){
+    addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
+  }
+  addline(code, 'public static void main(String args[]){', 1);
+
+  rule2code(code, element, 2);
+
+  addline(code, '}', 1);
+
+  getFungsi().then(function(response) {
+    var data = response.map(function(item) {
+      return item;
+    });
+    for (let index = 0; index < data.length; index++) {
+      addline(code, 'public function ' + data[index].function_type +" " + data[index].function_name + '(){', 1);
+      rule2codefunc(code, JSON.parse(data[index].data), 2);  
+      addline(code, '}', 1)  
+    }
+    addline(code, '}', 0);
+    translate(code);
+  }).catch(function(error) {
+    console.log(error); // Handle any errors  
   });
 }
 
@@ -230,36 +288,7 @@ function getFungsi(){
   });
 }
 
-function getgetFungsi(code, element, mainData){
-  getFungsi().then(function(response) {
-    var data = response.map(function(item) {
-      return item;
-    });
-    let allcode = [JSON.parse(mainData.data)];
-    for (let index = 0; index < data.length; index++) {
-      allcode.push(JSON.parse(data[index].data));
-    }
-    console.log(allcode);
-    addline(code, 'public class ' + mainData.name_class +'(){', 0);
-    addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
-    addline(code, 'public static void main (String args[]){', 1);
-    rule2code(code, JSON.parse(mainData.data), allcode, 2);  
-    addline(code, '}', 1)  
-    for (let index = 0; index < data.length; index++) {
-      var getparameter = JSON.parse(data[index].data);
-      var parameter = getparameter[0].parameter
-      addline(code, 'public static ' + data[index].function_type + " " + data[index].function_name + '(' + parameter + '){', 1);
-      rule2codefunc(code, JSON.parse(data[index].data), allcode, 2);  
-      addline(code, '}', 1)  
-    }
-    addline(code, '}', 0);
-    translate(code);
-  }).catch(function(error) {
-    console.log(error); // Handle any errors  
-  });
-}
-
-function rule2code(code, element, allelement, indent){
+function rule2code(code, element, indent){
   for (let index = 0; index < element.length; index++) {
     var object = element[index];
     // console.log(object);
@@ -268,42 +297,37 @@ function rule2code(code, element, allelement, indent){
       addline(code, object.dtype + " " + object.name + ";", indent);
       break;
     case "Function":
-      addline(code, object.name + "(" + object.parameter +");", indent);
-      break;
-    case "Return":
-      if(element[0].type != "void"){
-        addline(code, "return " + object.value + ";", indent);
-      }
-      break;
+      addline(code, object.name + "(" + object.parameter + ");", indent);
+      break;  
     case "Assign":
       addline(code, object.name + " = " + object.value + ";", indent);
       break;
     case "Input":
       addline(code, "System.out.println("+ '"' + object.prompt + " " + object.name + '"' + ");", indent);
-      addline(code, readFunction(allelement, object), indent);
+      addline(code, readFunction(element, object), indent);
       break;
     case "Output":
       addline(code ,"System.out.println("+ '"' + object.prompt + '"' +");", indent);
       break;
     case "Selection":
       addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
-      rule2code(code, object.TrueBranch, allelement, indent + 1);
+      rule2code(code, object.TrueBranch, indent + 1);
       addline(code, "} else { ", indent);
-      rule2code(code, object.FalseBranch, allelement, indent + 1);
+      rule2code(code, object.FalseBranch, indent + 1);
       addline(code, "}", indent);
       break;
     case "Looping":
       addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
-      rule2code(code, object.TrueBranch, allelement, indent + 1);
+      rule2code(code, object.TrueBranch, indent + 1);
       addline(code, "}", indent);
       break;
     default:
-      // console.log("dongo");
+      break;
     }
   }
 }
 
-function rule2codefunc(code, element, allelement, indent){
+function rule2codefunc(code, element, indent){
   for (let index = 0; index < element.length; index++) {
     var object = element[index];
     // console.log(object);
@@ -312,10 +336,8 @@ function rule2codefunc(code, element, allelement, indent){
       addline(code, object.dtype + " " + object.name + ";", indent);
       break;
     case "Return":
-      if(element[0].type != "void"){
-        addline(code, "return " + object.value + ";", indent);
-      }
-      break;
+      addline(code, "return " + object.value +  ";", indent);
+      break;   
     case "Function":
       if (index != 0) {
         addline(code, object.name + "();", indent);
@@ -325,22 +347,22 @@ function rule2codefunc(code, element, allelement, indent){
       addline(code, object.name + " = " + object.value + ";", indent);
       break;
     case "Input":
-      addline(code, "System.out.println("+ "'" + object.prompt + " " + object.name + "'" + ");", indent);
-      addline(code, readFunction(allelement, object), indent);
+      addline(code, "System.out.println("+ '"' + object.prompt + " " + object.name + '"' + ");", indent);
+      addline(code, readFunction(element, object), indent);
       break;
     case "Output":
-      addline(code ,"System.out.println("+ "'" + object.prompt + "'" +");", indent);
+      addline(code ,"System.out.println("+ '"' + object.prompt + '"' +");", indent);
       break;
     case "Selection":
       addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
-      rule2code(code, object.TrueBranch, allelement, indent + 1);
+      rule2code(code, object.TrueBranch, indent + 1);
       addline(code, "} else { ", indent);
-      rule2code(code, object.FalseBranch, allelement, indent + 1);
+      rule2code(code, object.FalseBranch, indent + 1);
       addline(code, "}", indent);
       break;
     case "Looping":
       addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
-      rule2code(code, object.TrueBranch, allelement, indent + 1);
+      rule2code(code, object.TrueBranch, indent + 1);
       addline(code, "}", indent);
       break;
     default:
@@ -373,20 +395,6 @@ function genInputBox(element, parent=null, branch=null){
               $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
           } else if (item.nodetype === 'Assign') {
               $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
-              $('<input>').attr('type', 'text').attr('name', 'value').attr('class', 'flowchart-input').val(item.value).appendTo(div);
-              $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
-          } else if (item.nodetype === 'Function') {
-              if (item.id == 1) {
-                $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
-                $('<input>').attr('type', 'text').attr('name', 'type').attr('class', 'flowchart-input').val(item.type).appendTo(div);
-                $('<input>').attr('type', 'text').attr('name', 'parameter').attr('class', 'flowchart-input').val(item.parameter).appendTo(div);
-                $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
-              } else {
-                $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
-                $('<input>').attr('type', 'text').attr('name', 'parameter').attr('class', 'flowchart-input').val(item.parameter).appendTo(div);
-                $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
-              }
-          } else if (item.nodetype === 'Return') {
               $('<input>').attr('type', 'text').attr('name', 'value').attr('class', 'flowchart-input').val(item.value).appendTo(div);
               $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
           } else if (item.nodetype === 'Input') {
@@ -424,8 +432,12 @@ function genInputBox(element, parent=null, branch=null){
               }
               genInputBox(item.TrueBranch, thisparent, "TrueBranch");
               genInputBox(item.FalseBranch, thisparent, "FalseBranch");
-          } else if (item.nodetype === 'End') {
-              $('<input>').attr('type', 'text').attr('name', 'prompt').attr('class', 'flowchart-input').val('ini end woy').appendTo(div);
+            } else if (item.nodetype === 'Function') {
+                $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
+                $('<input>').attr('type', 'text').attr('name', 'parameter').attr('class', 'flowchart-input').val(item.parameter).appendTo(div);
+                $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
+            } else if (item.nodetype === 'End') {
+                // $('<input>').attr('type', 'text').attr('name', 'prompt').attr('class', 'flowchart-input').val('ini end woy').appendTo(div);
           }
           $('#edit').append(div);
         });
@@ -455,7 +467,7 @@ function change(element){
     updateValueInArray(element, dataIdSplit.branch.reverse(), dataIdSplit.idName, dataIdSplit.parent, property, value);
 
     $.ajax({
-        url: '{{ route("fungsi.updatedata", ["id" => $fungsi->id]) }}',
+        url: '{{ route("answer.updatedata", ["id" => $answer->id]) }}',
         type: 'POST',
         headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -487,7 +499,7 @@ function delete2(element){
     }
     var jsonData = element;
     $.ajax({
-              url: '{{ route("fungsi.del.jsondata", ["id" => $fungsi->id]) }}',
+              url: '{{ route("answer.del.jsondata", ["id" => $answer->id]) }}',
               type: 'POST',              
               headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -524,7 +536,8 @@ function findtheArraytoDel(data, branch, id, parent){
 }
 
 function deleteData(dataArray, position) {
-  if (position >= 0 && position < dataArray.length) {
+  // console.log(position, dataArray.length);
+  if (position >= 0 && position <= dataArray.length) {
     // Remove the data at the specified position
     dataArray.splice(position - 1, 1);
 
@@ -563,41 +576,19 @@ function hasInput(array) {
   return false;
 }
 
-function readFunction2(dataArray, name) {
-  for (let i = 0; i < dataArray.length; i++) {
-    const data = dataArray[i];
-    if (Array.isArray(data)) {
-      const nestedResult = readFunction2(data, name);
-      if (nestedResult) {
-        return nestedResult;
-      }
-    } else if (data.nodetype === "Declare" && data.name === name) {
-      return data.dtype;
-    }
-    if (data.TrueBranch) {
-      const trueBranchResult = readFunction2(data.TrueBranch, name);
-      if (trueBranchResult) {
-        return trueBranchResult;
-      }
-    }
-    if (data.FalseBranch) {
-      const falseBranchResult = readFunction2(data.FalseBranch, name);
-      if (falseBranchResult) {
-        return falseBranchResult;
-      }
-    }
-  }
-  return null; // Return null if the matching object is not found
+function isVariable(array){
+  
 }
 
 function readFunction(element, object){
   let name; 
   let dtype;
   let scanner;
-  dtype = readFunction2(element, object.name);
-  name = object.name;
-  console.log(dtype);
-  switch (dtype) {
+  for (let index = 0; index < element.length; index++) {
+    if(element[index].nodetype == "Declare" && element[index].name == object.name){
+      name = element[index].name;
+      dtype = element[index].dtype;
+      switch (dtype) {
         case "int":
           scanner = "scanner.nextInt()";
           break;
@@ -620,6 +611,12 @@ function readFunction(element, object){
           console.log("I don't know what fruit this is.");
           break;
       }
+    }else{
+      continue;
+    }
+    break;
+
+  }
   let line = name + " = " + scanner + ";";
   return line;
 }
@@ -645,7 +642,7 @@ function defaultData(nodetype){
     "nodetype": "Declare",
     "name": "x",
     "dtype": "String"};
-  }
+  } 
   else if(nodetype == 'Input'){
     data = {
     "nodetype": "Input",
@@ -879,7 +876,7 @@ function showContextMenu(posX, posY, id, class1, label, element) {
             // console.log(jsonData);
 
             $.ajax({
-              url: '{{ route("fungsi.add.jsondata", ["id" => $fungsi->id]) }}',
+              url: '{{ route("answer.add.jsondata", ["id" => $answer->id]) }}',
               type: 'POST',              
               headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -939,11 +936,10 @@ function attributer(datum, index, nodes) {
 }
 
 function generateFlowchart(element) {
-  // Initialize the graphviz object
+
   var graphviz = d3.select("#flowchart").graphviz().zoom(false)
     .attributer(attributer);
 
-  // Define the flowchart nodes
   var nodes = [];
   var edges = [];
 
@@ -951,12 +947,11 @@ function generateFlowchart(element) {
         node [shape=box style=filled]; \
         ';
 
-  // Iterate through the array of objects and create nodes based on the nodetype property
   function processElement(element, parent = "", branch = "") {
     for (let index = 0; index < element.length; index++) {
       var obj = element[index];
-      var nodeId;
       var prevObj = element[index - 1];
+      var nodeId;
       var prevId;
       var nodetype = obj.nodetype;
 
@@ -967,7 +962,7 @@ function generateFlowchart(element) {
           nodeId = obj.id;
           prevId = prevObj?.id;
         }
-
+      
       if(obj == element[0]){
         processNode(nodeId, obj, nodetype);
       } else {
@@ -980,17 +975,8 @@ function generateFlowchart(element) {
   function processNode(nodeId, obj, nodetype){
     switch (nodetype) {
         case "Function":
-          if (obj.id != 1) {
-            var label = obj.name + " (" + obj.parameter + ")";
-            nodes.push({ id: nodeId, shape: "record", label: "<f0> |<f1>" + label + " |<f2> " });
-          } else {
-            var label = obj.name + "(" + obj.parameter + ")";
-            nodes.push({ id: nodeId, shape: "circle", label: label });
-          }
-          break;
-        case "Return":
-          var label = obj.nodetype + " " + obj.value;
-          nodes.push({ id: nodeId, shape: "circle", label: label });
+          var label = obj.name + " (" + obj.parameter + ")";
+          nodes.push({ id: nodeId, shape: "rectangle", label: label });
           break;
         case "Start":
           nodes.push({ id: nodeId, shape: "circle", label: "Start" });
@@ -1001,7 +987,7 @@ function generateFlowchart(element) {
           break;
         case "Assign":
           var label = obj.name + " = " + obj.value;
-          nodes.push({ id: nodeId, shape: "rectangle", label: label });
+          nodes.push({ id: nodeId, shape: "record", label: "<f0> |<f1>" + label + " |<f2> " });
           break;
         case "Input":
           var label = obj.prompt + " " + obj.name;
@@ -1015,29 +1001,23 @@ function generateFlowchart(element) {
           var label = obj.variable + " " + obj.operator + " " + obj.value;
           nodes.push({ id: nodeId, shape: "diamond", label: label });
           nodes.push({ id: "endif_" + nodeId, shape: "doublecircle", label: "endif" });
-          // processNode(nodeId + "_endif", null, "Endif", nodeId);
           
           if (obj.TrueBranch) {
-            // Generate nodes for TrueBranch
             processBranchIf(obj.TrueBranch, nodeId, "TrueBranch");
           }
 
           if (obj.FalseBranch) {
-            // Generate nodes for FalseBranch
             processBranchIf(obj.FalseBranch, nodeId, "FalseBranch");
           }
           break;
         case "Looping":
-          var label = obj.counter + " = " + obj.start + "; " + obj.counter  + " " + obj.operator + " " + obj.condition +  "; " + obj.counter + obj.increment;
+          var label = obj.counter + " = " + obj.start + "; " + obj.counter  + " " + obj.operator + " " + 
+          obj.condition +  "; " + obj.counter + obj.increment;
           nodes.push({ id: nodeId, shape: "diamond", label: label });
-          // nodes.push({ id: "endfor_" + nodeId, shape: "doublecircle", label: "endloop" });
-          // processNode(nodeId + "_endif", null, "Endif", nodeId);
           
           if (obj.TrueBranch) {
-            // Generate nodes for TrueBranch
             processBranchForTrue(obj.TrueBranch, nodeId, "TrueBranch");
-          }
-
+          
           break;
         case "End":
           nodes.push({ id: nodeId, shape: "circle", label: "End" });
@@ -1048,18 +1028,16 @@ function generateFlowchart(element) {
   }
 
   function processEdge(element, from, to, label){
-    // console.log(from, to);
     var res = isHaveBranch(element, from); // res = nodetype tapi karena nested id nya itu masih raw kek branch_parent_id nanti pisah dl
+    console.log(from, to, res);
+    // console.log(res);
     if(res == "Selection"){
-      from = "endif_" + from;
-      // console.log(from, to);
+      from = "endif_" + from; //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<SALAH DISINI KENA MASUK LOOP, APAKAH SEBELUMNYA SELECTION
     }else if(res == "Looping"){
       from = from;
     }else {
       from = from;
     }
-    // console.log(from, to);
-    // console.log(res, element, from, to);
     edges.push({ from: from, to: to, label:label });
   }
 
@@ -1077,6 +1055,7 @@ function generateFlowchart(element) {
 
   function processBranchIf(element, parent, branch){
     processEdge(element, parent, processIdFormat(element[0].id, parent, branch), processIdFormat(0, parent, branch));
+    //^^^^^^^^^^^^^ INI DULU YG DI PROSES, PAS NESTED KALO
     processElement(element, parent, branch);
     processEdge(element, processIdFormat(element[element.length - 1].id, parent, branch), "endif_" + parent, processIdFormat(element.length, parent, branch));
   }
@@ -1088,8 +1067,6 @@ function generateFlowchart(element) {
   }
 
   processElement(element);
-  // nodes.push({ id: "element_1", shape: "circle", label: "NGAPUS" });
-  // Generate the DOT code for the graph
 
   function isHaveBranch(element, id){
     var nodetype;
@@ -1125,18 +1102,17 @@ function generateFlowchart(element) {
     // dot += edge.from + ' -> ' + edge.to + ' [label="' + edge.label + '"];\n';
   }
 
-  
   dot += '}';
 
   graphviz
     .renderDot(dot)
     .on("end", function () {
-      // Get the SVG code generated by graphviz and set it as the innerHTML of the "flowchart" div
       var svg = document.querySelector("#flowchart svg");
       document.querySelector("#flowchart").innerHTML = "";
       document.querySelector("#flowchart").appendChild(svg);
       all(element);
     });
+}
 }
 
 </script>

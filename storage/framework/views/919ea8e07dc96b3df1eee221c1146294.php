@@ -219,15 +219,8 @@ function translateIdsInData(data) {
 
 function codeBox(code, element){
   getMain().then(function(response) {
-    var data = response.data;
-    addline(code, 'public class ' + response.name_class +'(){', 0);
-    if(hasInput(data) == true){
-      addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
-    }
-    addline(code, 'public static void main (String args[]){', 1);
-    rule2code(code, JSON.parse(data), 2);  
-    addline(code, '}', 1)  
-    getgetFungsi(code);
+    var mainData = response;
+    getgetFungsi(code, element, mainData);
   }).catch(function(error) {
     console.log(error); // Handle any errors  
   });
@@ -247,16 +240,26 @@ function getFungsi(){
   });
 }
 
-function getgetFungsi(code){
+function getgetFungsi(code, element, mainData){
   getFungsi().then(function(response) {
     var data = response.map(function(item) {
       return item;
     });
+    let allcode = [JSON.parse(mainData.data)];
+    for (let index = 0; index < data.length; index++) {
+      allcode.push(JSON.parse(data[index].data));
+    }
+    console.log(allcode);
+    addline(code, 'public class ' + mainData.name_class +'(){', 0);
+    addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
+    addline(code, 'public static void main (String args[]){', 1);
+    rule2code(code, JSON.parse(mainData.data), allcode, 2);  
+    addline(code, '}', 1)  
     for (let index = 0; index < data.length; index++) {
       var getparameter = JSON.parse(data[index].data);
       var parameter = getparameter[0].parameter
       addline(code, 'public static ' + data[index].function_type + " " + data[index].function_name + '(' + parameter + '){', 1);
-      rule2codefunc(code, JSON.parse(data[index].data), 2);  
+      rule2codefunc(code, JSON.parse(data[index].data), allcode, 2);  
       addline(code, '}', 1)  
     }
     addline(code, '}', 0);
@@ -266,7 +269,7 @@ function getgetFungsi(code){
   });
 }
 
-function rule2code(code, element, indent){
+function rule2code(code, element, allelement, indent){
   for (let index = 0; index < element.length; index++) {
     var object = element[index];
     // console.log(object);
@@ -286,22 +289,22 @@ function rule2code(code, element, indent){
       addline(code, object.name + " = " + object.value + ";", indent);
       break;
     case "Input":
-      addline(code, "System.out.println("+ "'" + object.prompt + " " + object.name + "'" + ");", indent);
-      addline(code, readFunction(element, object), indent);
+      addline(code, "System.out.println("+ '"' + object.prompt + " " + object.name + '"' + ");", indent);
+      addline(code, readFunction(allelement, object), indent);
       break;
     case "Output":
-      addline(code ,"System.out.println("+ "'" + object.prompt + "'" +");", indent);
+      addline(code ,"System.out.println("+ '"' + object.prompt + '"' +");", indent);
       break;
     case "Selection":
       addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
-      rule2code(code, object.TrueBranch, indent + 1);
+      rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "} else { ", indent);
-      rule2code(code, object.FalseBranch, indent + 1);
+      rule2code(code, object.FalseBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
     case "Looping":
       addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
-      rule2code(code, object.TrueBranch, indent + 1);
+      rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
     default:
@@ -310,7 +313,7 @@ function rule2code(code, element, indent){
   }
 }
 
-function rule2codefunc(code, element, indent){
+function rule2codefunc(code, element, allelement, indent){
   for (let index = 0; index < element.length; index++) {
     var object = element[index];
     // console.log(object);
@@ -333,21 +336,21 @@ function rule2codefunc(code, element, indent){
       break;
     case "Input":
       addline(code, "System.out.println("+ "'" + object.prompt + " " + object.name + "'" + ");", indent);
-      addline(code, readFunction(element, object), indent);
+      addline(code, readFunction(allelement, object), indent);
       break;
     case "Output":
       addline(code ,"System.out.println("+ "'" + object.prompt + "'" +");", indent);
       break;
     case "Selection":
       addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
-      rule2code(code, object.TrueBranch, indent + 1);
+      rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "} else { ", indent);
-      rule2code(code, object.FalseBranch, indent + 1);
+      rule2code(code, object.FalseBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
     case "Looping":
       addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
-      rule2code(code, object.TrueBranch, indent + 1);
+      rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
     default:
@@ -386,7 +389,7 @@ function genInputBox(element, parent=null, branch=null){
               if (item.id == 1) {
                 $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
                 $('<input>').attr('type', 'text').attr('name', 'type').attr('class', 'flowchart-input').val(item.type).appendTo(div);
-                $('<input>').attr('type', 'text').attr('name', 'parameter').attr('class', 'flowchart-input').attr('class', 'nameclass').val(item.parameter).appendTo(div);
+                $('<input>').attr('type', 'text').attr('name', 'parameter').attr('class', 'flowchart-input').val(item.parameter).appendTo(div);
                 $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
               } else {
                 $('<input>').attr('type', 'text').attr('name', 'name').attr('class', 'flowchart-input').val(item.name).appendTo(div);
@@ -570,21 +573,47 @@ function hasInput(array) {
   return false;
 }
 
+function readFunction2(dataArray, name) {
+  for (let i = 0; i < dataArray.length; i++) {
+    const data = dataArray[i];
+    if (Array.isArray(data)) {
+      const nestedResult = readFunction2(data, name);
+      if (nestedResult) {
+        return nestedResult;
+      }
+    } else if (data.nodetype === "Declare" && data.name === name) {
+      return data.dtype;
+    }
+    if (data.TrueBranch) {
+      const trueBranchResult = readFunction2(data.TrueBranch, name);
+      if (trueBranchResult) {
+        return trueBranchResult;
+      }
+    }
+    if (data.FalseBranch) {
+      const falseBranchResult = readFunction2(data.FalseBranch, name);
+      if (falseBranchResult) {
+        return falseBranchResult;
+      }
+    }
+  }
+  return null; // Return null if the matching object is not found
+}
+
 function readFunction(element, object){
   let name; 
   let dtype;
   let scanner;
-  for (let index = 0; index < element.length; index++) {
-    if(element[index].nodetype == "Declare" && element[index].name == object.name){
-      name = element[index].name;
-      dtype = element[index].dtype;
-      switch (dtype) {
+  dtype = readFunction2(element, object.name);
+  name = object.name;
+  console.log(dtype);
+  switch (dtype) {
         case "int":
           scanner = "scanner.nextInt()";
           break;
         case "float":
           scanner = "scanner.nextFloat()";
-          break;
+          break;  
         case "real":
           scanner = "scanner.nextDouble()";
           break;
@@ -601,12 +630,6 @@ function readFunction(element, object){
           console.log("I don't know what fruit this is.");
           break;
       }
-    }else{
-      continue;
-    }
-    break;
-
-  }
   let line = name + " = " + scanner + ";";
   return line;
 }
@@ -967,8 +990,13 @@ function generateFlowchart(element) {
   function processNode(nodeId, obj, nodetype){
     switch (nodetype) {
         case "Function":
-          var label = obj.name + "(" + obj.parameter + ")";
-          nodes.push({ id: nodeId, shape: "circle", label: label });
+          if (obj.id != 1) {
+            var label = obj.name + " (" + obj.parameter + ")";
+            nodes.push({ id: nodeId, shape: "record", label: "<f0> |<f1>" + label + " |<f2> " });
+          } else {
+            var label = obj.name + "(" + obj.parameter + ")";
+            nodes.push({ id: nodeId, shape: "circle", label: label });
+          }
           break;
         case "Return":
           var label = obj.nodetype + " " + obj.value;
@@ -1012,7 +1040,7 @@ function generateFlowchart(element) {
         case "Looping":
           var label = obj.counter + " = " + obj.start + "; " + obj.counter  + " " + obj.operator + " " + obj.condition +  "; " + obj.counter + obj.increment;
           nodes.push({ id: nodeId, shape: "diamond", label: label });
-          nodes.push({ id: "endfor_" + nodeId, shape: "doublecircle", label: "endloop" });
+          // nodes.push({ id: "endfor_" + nodeId, shape: "doublecircle", label: "endloop" });
           // processNode(nodeId + "_endif", null, "Endif", nodeId);
           
           if (obj.TrueBranch) {
@@ -1048,7 +1076,7 @@ function generateFlowchart(element) {
   function processBranchForTrue(element, parent, branch){
     processEdge(element, parent, processIdFormat(element[0].id, parent, branch), processIdFormat(0, parent, branch));
     processElement(element, parent, branch);
-    processEdge(element, processIdFormat(element[element.length - 1].id, parent, branch), "endfor_" + parent, processIdFormat(element.length, parent, branch));
+    processEdge(element, processIdFormat(element[element.length - 1].id, parent, branch), parent, processIdFormat(element.length, parent, branch));
   }
 
   function processBranchForFalse(element, parent, branch){
@@ -1058,7 +1086,6 @@ function generateFlowchart(element) {
   }
 
   function processBranchIf(element, parent, branch){
-    // console.log(element, parent, branch);
     processEdge(element, parent, processIdFormat(element[0].id, parent, branch), processIdFormat(0, parent, branch));
     processElement(element, parent, branch);
     processEdge(element, processIdFormat(element[element.length - 1].id, parent, branch), "endif_" + parent, processIdFormat(element.length, parent, branch));

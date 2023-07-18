@@ -113,7 +113,7 @@ class FungsiController extends Controller
                 "nodetype" => "Function",
                 "name" => "func",
                 "type" => "void",
-                "parameter" => "",
+                "parameter" => "int a",
             ],
             [
                 "id" => 2,
