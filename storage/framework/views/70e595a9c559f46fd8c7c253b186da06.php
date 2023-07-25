@@ -273,13 +273,16 @@ function codeBox(code, element){
     for (let index = 0; index < data.length; index++) {
       allcode.push(JSON.parse(data[index].data));
     }
-    addline(code, 'public class '+  '<?php echo e($answer->name_class); ?>' +'(){', 0);
-    addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
+    addline(code, "import java.util.Scanner;", 0);
+    addline(code, 'public class '+  '<?php echo e($answer->name_class); ?>' +'{', 0);
     addline(code, 'public static void main(String args[]){', 1);
+    addline(code, 'Scanner scanner = new Scanner(System.in);', 2);
     rule2code(code, element, allcode, 2);
     addline(code, '}', 1);
     for (let index = 0; index < data.length; index++) {
-      addline(code, 'public function ' + data[index].function_type +" " + data[index].function_name + '(){', 1);
+      var getparameter = JSON.parse(data[index].data);
+      var parameter = getparameter[0].parameter
+      addline(code, 'public ' + data[index].function_type +" " + data[index].function_name + '(' + parameter + '){', 1);
       rule2codefunc(code, JSON.parse(data[index].data), allcode, 2);  
       addline(code, '}', 1)  
     }
@@ -325,7 +328,7 @@ function rule2code(code, element, allelement, indent){
       addline(code, "}", indent);
       break;
     case "Looping":
-      addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
+      addline(code, "for(int = " + object.counter + " = " + object.start + "; " + object.counter + " " + object.operator + " " + object.condition + "; " + object.counter + object.increment + "){", indent);
       rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
@@ -369,7 +372,7 @@ function rule2codefunc(code, element, allelement, indent){
       addline(code, "}", indent);
       break;
     case "Looping":
-      addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
+      addline(code, "for(int = " + object.counter + " = " + object.start + "; " + object.counter + " " + object.operator + " " + object.condition + "; " + object.counter + object.increment + "){", indent);
       rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
@@ -391,7 +394,7 @@ function translate(listjavacode){
 
 function genInputBox(element, parent=null, branch=null){
   $.each(element, function (index, item) {
-          var div;
+    var div;
           if(!branch && !parent){
             div = $('<div>').attr('class', 'prompt-area').attr('id', item.id);
           }else {
@@ -445,10 +448,9 @@ function genInputBox(element, parent=null, branch=null){
                 $('<input>').attr('type', 'text').attr('name', 'parameter').attr('class', 'flowchart-input').val(item.parameter).appendTo(div);
                 $('<button>').attr('type', 'button').attr('name', 'delete').attr('class', 'flowchart-delete').text("DELETE").appendTo(div);
             } else if (item.nodetype === 'End') {
-                // $('<input>').attr('type', 'text').attr('name', 'prompt').attr('class', 'flowchart-input').val('ini end woy').appendTo(div);
           }
-          $('#edit').append(div);
-        });
+          $('#edit').append(div);        
+  });
 }
 
 function splitId(id) {

@@ -101,12 +101,9 @@ function refresh(){
         if (getelement) {
           element.splice(0, 0, ...JSON.parse(getelement));
         }
-        // namefuncbutton();
         codeBox(listjavacode, element);
-        console.log(listjavacode);
         generateFlowchart(element);
         genInputBox(element, null, null);
-        // translate(listjavacode);
         change(element);
         delete2(element);
     },
@@ -240,9 +237,10 @@ function getgetFungsi(code, element, mainData){
       allcode.push(JSON.parse(data[index].data));
     }
     console.log(allcode);
-    addline(code, 'public class ' + mainData.name_class +'(){', 0);
-    addline(code, 'static Scanner scanner = new Scanner(System.in);', 1);
+    addline(code, "import java.util.Scanner;", 0);
+    addline(code, 'public class ' + mainData.name_class + '{', 0);
     addline(code, 'public static void main (String args[]){', 1);
+    addline(code, 'Scanner scanner = new Scanner(System.in);', 2);
     rule2code(code, JSON.parse(mainData.data), allcode, 2);  
     addline(code, '}', 1)  
     for (let index = 0; index < data.length; index++) {
@@ -293,7 +291,7 @@ function rule2code(code, element, allelement, indent){
       addline(code, "}", indent);
       break;
     case "Looping":
-      addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
+      addline(code, "for(int = " + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
       rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
@@ -339,7 +337,7 @@ function rule2codefunc(code, element, allelement, indent){
       addline(code, "}", indent);
       break;
     case "Looping":
-      addline(code, "for(" + object.counter + " = " + object.start + ", " + object.counter + " " + object.operator + " " + object.condition + ", " + object.counter + object.increment + "){", indent);
+      addline(code, "for(int " + object.counter + " = " + object.start + "; " + object.counter + " " + object.operator + " " + object.condition + "; " + object.counter + object.increment + "){", indent);
       rule2code(code, object.TrueBranch, allelement, indent + 1);
       addline(code, "}", indent);
       break;
@@ -524,7 +522,7 @@ function findtheArraytoDel(data, branch, id, parent){
 }
 
 function deleteData(dataArray, position) {
-  if (position >= 0 && position < dataArray.length) {
+  if (position >= 0 && position <= dataArray.length) {
     // Remove the data at the specified position
     dataArray.splice(position - 1, 1);
 
