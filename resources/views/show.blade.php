@@ -308,7 +308,7 @@ function rule2code(code, element, allelement, indent){
       addline(code, readFunction(allelement, object), indent);
       break;
     case "Output":
-      addline(code ,"System.out.println("+ '"' + object.prompt + '"' +");", indent);
+      addline(code ,"System.out.println(" + object.prompt + ");", indent);
       break;
     case "Selection":
       addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
@@ -352,7 +352,7 @@ function rule2codefunc(code, element, allelement, indent){
       addline(code, readFunction(allelement, object), indent);
       break;
     case "Output":
-      addline(code ,"System.out.println("+ '"' + object.prompt + '"' +");", indent);
+      addline(code ,"System.out.println("+  object.prompt +");", indent);
       break;
     case "Selection":
       addline(code, "if(" + object.variable + " " + object.operator + " " + object.value + "){", indent);
