@@ -45,6 +45,7 @@ class FunctionSeeder extends Seeder
                         "id" => 5,
                         "nodetype" => "Output",
                         "prompt" => "x = 19",
+                        "println" => "on",
                     ],
                     [
                         "id" => 6,
@@ -83,6 +84,7 @@ class FunctionSeeder extends Seeder
                             "id" => 5,
                             "nodetype" => "Output",
                             "prompt" => "x = 19",
+                            "println" => "on",
                         ],
                         [
                             "id" => 6,
@@ -121,6 +123,7 @@ class FunctionSeeder extends Seeder
                                 "id" => 5,
                                 "nodetype" => "Output",
                                 "prompt" => "x = 19",
+                                "println" => "on",
                             ],
                             [
                                 "id" => 6,
